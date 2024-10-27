@@ -1,0 +1,642 @@
+fileFormatVersion: 2
+guid: 4df0a6daaaa0f7f4ba5298098bb00ec6
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_0
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 590
+        width: 45
+        height: 81
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b8f2d8b427b84049be358f53ed6c841
+      internalID: 1890537839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_1
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 587
+        width: 47
+        height: 84
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6679a9bb925188d48b420b19643784af
+      internalID: 471462081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_2
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 586
+        width: 47
+        height: 85
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 500460c0152124349a469655b9b9ad34
+      internalID: 1527700926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_3
+      rect:
+        serializedVersion: 2
+        x: 602
+        y: 584
+        width: 49
+        height: 87
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a929aab3bcc3e5748abbbd89d826e4b4
+      internalID: 855364740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_4
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 581
+        width: 51
+        height: 89
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e057e0e4a27ecf04ea8b77a7aa4083ac
+      internalID: 1814958320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_5
+      rect:
+        serializedVersion: 2
+        x: 961
+        y: 579
+        width: 51
+        height: 90
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e77abb0ce79ad8e4db3813bb0c1cc1c0
+      internalID: -890223487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_6
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 397
+        width: 50
+        height: 92
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a11c6bb5d8626248b7a7c02fbecd678
+      internalID: -981729778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_7
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 397
+        width: 50
+        height: 92
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 73fb9325113efdb4f94536674d2df4ee
+      internalID: -594429699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_8
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 397
+        width: 50
+        height: 92
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 73e30ac855bc34c4ca9b305e8401edde
+      internalID: -199480214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_9
+      rect:
+        serializedVersion: 2
+        x: 601
+        y: 401
+        width: 49
+        height: 88
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 308a92bfc71434946b2a10a13a753130
+      internalID: -1894378954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_10
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 403
+        width: 48
+        height: 86
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 751867683be27804d9c13a5650a1b518
+      internalID: 613967396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_11
+      rect:
+        serializedVersion: 2
+        x: 962
+        y: 406
+        width: 48
+        height: 83
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03bb68ed82b0d5240871a84fac98f499
+      internalID: 395442258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_12
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 231
+        width: 48
+        height: 79
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd7b0c1a02028684381e3648d8e7420d
+      internalID: -416115255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_13
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 229
+        width: 48
+        height: 81
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b06cd6f4db7a15b4fa908ddb65c42e5e
+      internalID: -923603785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_14
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 226
+        width: 47
+        height: 85
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b9858c020c5b5c48a5a3b927b6324bd
+      internalID: -71150131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_15
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 224
+        width: 46
+        height: 87
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49e6e56700ed52e449e0352927b412a2
+      internalID: 1770435538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_16
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 223
+        width: 46
+        height: 88
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb99243e68cfe694084159b3c427e7ca
+      internalID: -1935234068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_17
+      rect:
+        serializedVersion: 2
+        x: 964
+        y: 219
+        width: 45
+        height: 91
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03ac238a740ebf842bc73f64669da471
+      internalID: -1369238973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_18
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 38
+        width: 45
+        height: 92
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a309970404433294196cda20c92fabe6
+      internalID: -898249277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_19
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 37
+        width: 46
+        height: 92
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9377b9e7db8f00649a9a65b8df3d93d5
+      internalID: -1955274144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_20
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 38
+        width: 45
+        height: 91
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5da39443569d1a4e80cbcf37b1999be
+      internalID: -423379248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_21
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 39
+        width: 46
+        height: 90
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d54d65e35bcb3974ebb2c3bf01558b87
+      internalID: 1174317098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_22
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 44
+        width: 46
+        height: 86
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f9523b9d93d23f4c81b8b5548241b73
+      internalID: -22498881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WalkForward_Unarmed_Body_000_23
+      rect:
+        serializedVersion: 2
+        x: 964
+        y: 49
+        width: 45
+        height: 81
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dec640d087a4ea743ace60750c1c714c
+      internalID: -1045338810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 99e8541710eb4de40bb432a1d87426dd
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      WalkForward_Unarmed_Body_000_0: 1890537839
+      WalkForward_Unarmed_Body_000_1: 471462081
+      WalkForward_Unarmed_Body_000_10: 613967396
+      WalkForward_Unarmed_Body_000_11: 395442258
+      WalkForward_Unarmed_Body_000_12: -416115255
+      WalkForward_Unarmed_Body_000_13: -923603785
+      WalkForward_Unarmed_Body_000_14: -71150131
+      WalkForward_Unarmed_Body_000_15: 1770435538
+      WalkForward_Unarmed_Body_000_16: -1935234068
+      WalkForward_Unarmed_Body_000_17: -1369238973
+      WalkForward_Unarmed_Body_000_18: -898249277
+      WalkForward_Unarmed_Body_000_19: -1955274144
+      WalkForward_Unarmed_Body_000_2: 1527700926
+      WalkForward_Unarmed_Body_000_20: -423379248
+      WalkForward_Unarmed_Body_000_21: 1174317098
+      WalkForward_Unarmed_Body_000_22: -22498881
+      WalkForward_Unarmed_Body_000_23: -1045338810
+      WalkForward_Unarmed_Body_000_3: 855364740
+      WalkForward_Unarmed_Body_000_4: 1814958320
+      WalkForward_Unarmed_Body_000_5: -890223487
+      WalkForward_Unarmed_Body_000_6: -981729778
+      WalkForward_Unarmed_Body_000_7: -594429699
+      WalkForward_Unarmed_Body_000_8: -199480214
+      WalkForward_Unarmed_Body_000_9: -1894378954
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

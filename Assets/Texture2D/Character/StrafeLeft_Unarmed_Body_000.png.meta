@@ -1,0 +1,642 @@
+fileFormatVersion: 2
+guid: ae5960022a4d12041a59244c9ecdd75e
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_0
+      rect:
+        serializedVersion: 2
+        x: 58
+        y: 589
+        width: 65
+        height: 84
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67261660f7cf6424c891d5ac2769a499
+      internalID: -1888520321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_1
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 590
+        width: 70
+        height: 84
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dca0ab18baa7ce744b5be6d2081498ff
+      internalID: 1495063190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_2
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 591
+        width: 72
+        height: 83
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c60915e3e3d53364fa00982f5268317f
+      internalID: 691299796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_3
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 589
+        width: 71
+        height: 86
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5552db56d8e7a2d479f98392d9197af9
+      internalID: 1972985826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_4
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 588
+        width: 66
+        height: 87
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e52b07e18186772429f64032af551785
+      internalID: -2038112962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_5
+      rect:
+        serializedVersion: 2
+        x: 955
+        y: 588
+        width: 64
+        height: 87
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffaab9ee7fd37574ca56865c85720384
+      internalID: 1541827936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_6
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 411
+        width: 61
+        height: 83
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fda8ccee138eb8f4db24a808a04168c4
+      internalID: -1472795759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_7
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 413
+        width: 59
+        height: 81
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 805b00201f8bd0246894042333391790
+      internalID: -174196140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_8
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 414
+        width: 57
+        height: 80
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a8e566c89a3d014bacb3b78b788c7e8
+      internalID: 539453636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_9
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 414
+        width: 57
+        height: 79
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21a257997084c18488dff21a8bfe2cca
+      internalID: 1295062325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_10
+      rect:
+        serializedVersion: 2
+        x: 780
+        y: 413
+        width: 56
+        height: 80
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f44e90f2d99463468bc3b2d7c961bf0
+      internalID: -1834962975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_11
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 411
+        width: 56
+        height: 82
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44333d64282bbc84f8ba75746bf7a8e1
+      internalID: 539315723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_12
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 230
+        width: 58
+        height: 83
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf4606566d6246140b2eaa44bb96f124
+      internalID: 1854709914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_13
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 230
+        width: 60
+        height: 83
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 146c3e46f63b6b643979ec2739669713
+      internalID: -917389434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_14
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 230
+        width: 61
+        height: 82
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccb756b915accfa44afedf99986de3a9
+      internalID: -768272864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_15
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 230
+        width: 61
+        height: 82
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5555e4456673f37469782701a32875d9
+      internalID: 265908995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_16
+      rect:
+        serializedVersion: 2
+        x: 778
+        y: 230
+        width: 61
+        height: 82
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 87a5692a97f67c64bb4cdf25aea97996
+      internalID: -1458206156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_17
+      rect:
+        serializedVersion: 2
+        x: 958
+        y: 230
+        width: 61
+        height: 82
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f1d5545f572e6c349a12b5ba82b0d2a6
+      internalID: -2098829709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_18
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 50
+        width: 60
+        height: 81
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 05ad1e2296ab012408e3a75a816bba14
+      internalID: -1641607047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_19
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 49
+        width: 59
+        height: 82
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 379ac86e4024a7440b2182ea40fe7ab4
+      internalID: -1317359905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_20
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 49
+        width: 58
+        height: 82
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3fd4435af23364d4caa73aa52883f90a
+      internalID: -1104062426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_21
+      rect:
+        serializedVersion: 2
+        x: 601
+        y: 49
+        width: 58
+        height: 82
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be025ef584f8a6d42af1de3c4db08403
+      internalID: -395995311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_22
+      rect:
+        serializedVersion: 2
+        x: 779
+        y: 49
+        width: 60
+        height: 82
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79519b04d9564944b805a2e239c1dd41
+      internalID: -1362013150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: StrafeLeft_Unarmed_Body_000_23
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 49
+        width: 61
+        height: 83
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: caa8a95acd314b643871b0ec880d4aad
+      internalID: 745494799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: c3d25441f6c02cf46b71783a8044a626
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      StrafeLeft_Unarmed_Body_000_0: -1888520321
+      StrafeLeft_Unarmed_Body_000_1: 1495063190
+      StrafeLeft_Unarmed_Body_000_10: -1834962975
+      StrafeLeft_Unarmed_Body_000_11: 539315723
+      StrafeLeft_Unarmed_Body_000_12: 1854709914
+      StrafeLeft_Unarmed_Body_000_13: -917389434
+      StrafeLeft_Unarmed_Body_000_14: -768272864
+      StrafeLeft_Unarmed_Body_000_15: 265908995
+      StrafeLeft_Unarmed_Body_000_16: -1458206156
+      StrafeLeft_Unarmed_Body_000_17: -2098829709
+      StrafeLeft_Unarmed_Body_000_18: -1641607047
+      StrafeLeft_Unarmed_Body_000_19: -1317359905
+      StrafeLeft_Unarmed_Body_000_2: 691299796
+      StrafeLeft_Unarmed_Body_000_20: -1104062426
+      StrafeLeft_Unarmed_Body_000_21: -395995311
+      StrafeLeft_Unarmed_Body_000_22: -1362013150
+      StrafeLeft_Unarmed_Body_000_23: 745494799
+      StrafeLeft_Unarmed_Body_000_3: 1972985826
+      StrafeLeft_Unarmed_Body_000_4: -2038112962
+      StrafeLeft_Unarmed_Body_000_5: 1541827936
+      StrafeLeft_Unarmed_Body_000_6: -1472795759
+      StrafeLeft_Unarmed_Body_000_7: -174196140
+      StrafeLeft_Unarmed_Body_000_8: 539453636
+      StrafeLeft_Unarmed_Body_000_9: 1295062325
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
