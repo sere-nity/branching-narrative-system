@@ -54,7 +54,7 @@ namespace PixelCrushers.DialogueSystem.Twine
 
         #region Initialization
 
-        [MenuItem("Tools/Pixel Crushers/Dialogue System/Import/Twine 2 (Twison)", false, 1)]
+        [MenuItem("Tools/Pixel Crushers/Dialogue System/Import/Twine 2 (Twison)...", false, 1)]
         public static void Init()
         {
             GetWindow(typeof(TwineImportWindow), false, "Twine Import");
@@ -122,7 +122,11 @@ namespace PixelCrushers.DialogueSystem.Twine
                 }
 #else
                 long localId;
-                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(database, out prefs.databaseGuid, out localId);
+                try
+                {
+                    AssetDatabase.TryGetGUIDAndLocalFileIdentifier(database, out prefs.databaseGuid, out localId);
+                }
+                catch (NullReferenceException) { }
 #endif
                 RefreshActorPopupData();
             }

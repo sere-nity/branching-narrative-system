@@ -56,13 +56,13 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
             }
 
             // Log:
-            if (DialogueDebug.logInfo) Debug.Log(string.Format("{0}: Sequencer: Camera({1}, {2}, {3}s)", new System.Object[] { DialogueDebug.Prefix, angle, Tools.GetGameObjectName(subject), duration }));
-            if ((angleTransform == null) && DialogueDebug.logWarnings) Debug.LogWarning(string.Format("{0}: Sequencer: Camera angle '{1}' wasn't found.", new System.Object[] { DialogueDebug.Prefix, angle }));
-            if ((subject == null) && DialogueDebug.logWarnings) Debug.LogWarning(string.Format("{0}: Sequencer: Camera subject '{1}' wasn't found.", new System.Object[] { DialogueDebug.Prefix, GetParameter(1) }));
+            if ((angleTransform == null) && DialogueDebug.logWarnings) Debug.LogWarning(string.Format("{0}: Sequencer: Camera({1}): Camera angle '{2}' wasn't found.", new System.Object[] { DialogueDebug.Prefix, GetParameters(), angle }));
+            else if ((subject == null && !isOriginal) && !(isLocalTransform && angleTransform != null) && DialogueDebug.logWarnings) Debug.LogWarning(string.Format("{0}: Sequencer: Camera({1}): Camera subject '{2}' or GameObject named '{3}' wasn't found.", new System.Object[] { DialogueDebug.Prefix, GetParameters(), GetParameter(1), GetParameter(0) }));
+            else if (DialogueDebug.logInfo) Debug.Log(string.Format("{0}: Sequencer: Camera({1}, {2}, {3}s)", new System.Object[] { DialogueDebug.Prefix, angle, Tools.GetGameObjectName(subject), duration }));
 
             // If we have a camera angle and subject, move the camera to it:
             sequencer.TakeCameraControl();
-            if (isOriginal || (angleTransform != null && subject != null))
+            if (isOriginal || (angleTransform != null && (subject != null || isLocalTransform)))
             {
                 cameraTransform = sequencer.sequencerCameraTransform;
                 if (isOriginal)

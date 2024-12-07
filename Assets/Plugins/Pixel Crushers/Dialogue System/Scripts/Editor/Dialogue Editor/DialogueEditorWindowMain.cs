@@ -60,12 +60,13 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         private const string CompleteUndoKey = "PixelCrushers.DialogueSystem.DialogueEditor.registerCompleteObjectUndo";
         private const string ShowNodeEditorKey = "PixelCrushers.DialogueSystem.DialogueEditor.ShowNodeEditor";
         private const string ShowDatabaseNameKey = "PixelCrushers.DialogueSystem.DialogueEditor.ShowDatabaseName";
+        private const string SyncOnOpenKey = "PixelCrushers.DialogueSystem.DialogueEditor.SyncOnOpen";
         private const string AutoBackupKey = "PixelCrushers.DialogueSystem.DialogueEditor.AutoBackupFrequency";
         private const string AutoBackupFolderKey = "PixelCrushers.DialogueSystem.DialogueEditor.AutoBackupFolder";
-        private const string AddNewNodesToRightKey = "PixelCrushers.DialogueSystem.DialogueEditor.AddNewNodesToRight";
         private const string TrimWhitespaceAroundPipesKey = "PixelCrushers.DialogueSystem.DialogueEditor.TrimWhitespaceAroundPipes";
         private const string LocalizationLanguagesKey = "PixelCrushers.DialogueSystem.DialogueEditor.LocalizationLanguages";
         private const string SequencerDragDropCommandsKey = "PixelCrushers.DialogueSystem.DialogueEditor.SequencerDragDropCommands";
+        private const string DialogueEditorPrefsKey = "PixelCrushers.DialogueSystem.DialogueEditor.Prefs";
 
         private const float RuntimeUpdateFrequency = 0.5f;
         private float timeSinceLastRuntimeUpdate = 0;
@@ -77,13 +78,52 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
 
         private bool showDatabaseName = true;
 
+        private bool syncOnOpen = true;
+
+        private DialogueEditorPrefs prefs = null;
+
+        private const float MinWidth = 720f;
+        private const float MinHeight = 240f;
+
+#if !(UNITY_2023_1_OR_NEWER || UNITY_2022_3_OR_NEWER)
+        // Expose focusChanged event in pre-Unity 2023 versions.
+        // Technically it's exposed in 2022.3, but docs say otherwise.
+        public static System.Action<bool> UnityEditorFocusChanged
+        {
+            get
+            {
+                var fieldInfo = typeof(EditorApplication).GetField("focusChanged",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+                return (System.Action<bool>)fieldInfo.GetValue(null);
+            }
+            set
+            {
+                var fieldInfo = typeof(EditorApplication).GetField("focusChanged",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+                fieldInfo.SetValue(null, value);
+            }
+        }
+#endif
+
+        public static void ResetPosition()
+        {
+            if (instance == null)
+            {
+                instance = OpenDialogueEditorWindow();
+            }
+            instance.position = new Rect(0f, 0f, MinWidth, MinHeight);
+        }
+
         private void OnEnable()
         {
             if (debug) Debug.Log("<color=green>Dialogue Editor: OnEnable (Selection.activeObject=" + Selection.activeObject + ", database=" + database + ")</color>", Selection.activeObject);
             instance = this;
-            template = TemplateTools.LoadFromEditorPrefs();
-            minSize = new Vector2(720, 240);
-            if (Selection.activeObject != null)
+            minSize = new Vector2(MinWidth, MinHeight);
+            if (database != null)
+            {
+                LoadTemplateFromDatabase();
+            }
+            else if (Selection.activeObject != null)
             {
                 SelectObject(Selection.activeObject);
             }
@@ -100,8 +140,24 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             EditorApplication.playmodeStateChanged -= OnPlaymodeStateChanged;
             EditorApplication.playmodeStateChanged += OnPlaymodeStateChanged;
 #endif
+#if UNITY_2023_1_OR_NEWER || UNITY_2022_3_OR_NEWER
+            EditorApplication.focusChanged += OnFocusChanged;
+#else
+            UnityEditorFocusChanged += OnFocusChanged;
+#endif
             showQuickDialogueTextEntry = false;
             LoadEditorSettings();
+            if (database == null) template = TemplateTools.LoadFromEditorPrefs();
+            InitializeEntrytagFormatFromScene();
+            InitializeDialogueTree();
+            ResetDialogueEntryText();
+            if (toolbar.current == Toolbar.Tab.Conversations &&
+                currentConversationID != -1 && 
+                database != null)
+            {
+                var conversation = database.GetConversation(currentConversationID);
+                if (conversation != null) OpenConversation(conversation);
+            }
         }
 
         private void OnDisable()
@@ -112,11 +168,12 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
 #else
             EditorApplication.playmodeStateChanged -= OnPlaymodeStateChanged;
 #endif
-            try
-            {
-                EditorApplication.delayCall += AssetDatabase.SaveAssets;
-            }
-            catch (System.NullReferenceException) { } // Some Unity versions w/disabled domain reloading don't allow when entering play mode.
+#if UNITY_2023_1_OR_NEWER || UNITY_2022_3_OR_NEWER
+            EditorApplication.focusChanged -= OnFocusChanged;
+#else
+            UnityEditorFocusChanged += OnFocusChanged;
+#endif
+            if (database != null) EditorUtility.SetDirty(database);
             SaveTemplate();
             inspectorSelection = null;
             instance = null;
@@ -133,25 +190,28 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         {
             registerCompleteObjectUndo = EditorPrefs.GetBool(CompleteUndoKey, true);
             showDatabaseName = EditorPrefs.GetBool(ShowDatabaseNameKey, true);
+            syncOnOpen = EditorPrefs.GetBool(SyncOnOpenKey, true);
             autoBackupFrequency = EditorPrefs.GetFloat(AutoBackupKey, DefaultAutoBackupFrequency);
             autoBackupFolder = EditorPrefs.GetString(AutoBackupFolderKey, string.Empty);
             timeForNextAutoBackup = Time.realtimeSinceStartup + autoBackupFrequency;
-            addNewNodesToRight = EditorPrefs.GetBool(AddNewNodesToRightKey, false);
             trimWhitespaceAroundPipes = EditorPrefs.GetBool(TrimWhitespaceAroundPipesKey, true);
             if (EditorPrefs.HasKey(LocalizationLanguagesKey)) localizationLanguages = JsonUtility.FromJson<LocalizationLanguages>(EditorPrefs.GetString(LocalizationLanguagesKey));
             if (EditorPrefs.HasKey(SequencerDragDropCommandsKey)) SequenceEditorTools.RestoreDragDropCommands(EditorPrefs.GetString(SequencerDragDropCommandsKey));
+            if (EditorPrefs.HasKey(DialogueEditorPrefsKey)) prefs = JsonUtility.FromJson<DialogueEditorPrefs>(EditorPrefs.GetString(DialogueEditorPrefsKey));
+            if (prefs == null) prefs = new DialogueEditorPrefs();
         }
 
         private void SaveEditorSettings()
         {
             EditorPrefs.SetBool(CompleteUndoKey, registerCompleteObjectUndo);
             EditorPrefs.SetBool(ShowDatabaseNameKey, showDatabaseName);
+            EditorPrefs.SetBool(SyncOnOpenKey, syncOnOpen);
             EditorPrefs.SetFloat(AutoBackupKey, autoBackupFrequency);
             EditorPrefs.SetString(AutoBackupFolderKey, autoBackupFolder);
-            EditorPrefs.SetBool(AddNewNodesToRightKey, addNewNodesToRight);
             EditorPrefs.SetBool(TrimWhitespaceAroundPipesKey, trimWhitespaceAroundPipes);
             EditorPrefs.SetString(LocalizationLanguagesKey, JsonUtility.ToJson(localizationLanguages));
             EditorPrefs.SetString(SequencerDragDropCommandsKey, SequenceEditorTools.SaveDragDropCommands());
+            EditorPrefs.SetString(DialogueEditorPrefsKey, JsonUtility.ToJson(prefs));
         }
 
         private void LoadTemplateFromDatabase()
@@ -166,6 +226,11 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             if (database == null) return;
             database.templateJson = JsonUtility.ToJson(template);
             SetDatabaseDirty("Save template");
+        }
+
+        private void OnFocusChanged(bool isFocused)
+        {
+            if (!isFocused) SetDatabaseDirty("Lost focus");
         }
 
 #if UNITY_2017_2_OR_NEWER
@@ -183,7 +248,10 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         private void HandlePlayModeStateChanged()
         {
             if (debug) Debug.Log("<color=cyan>Dialogue Editor: OnPlaymodeStateChanged - isPlaying=" + EditorApplication.isPlaying + "/" + EditorApplication.isPlayingOrWillChangePlaymode + "</color>");
-            AssetDatabase.SaveAssets();
+            if (!EditorApplication.isPlaying && EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                AssetDatabase.SaveAssets();
+            }
             toolbar.UpdateTabNames(template.treatItemsAsQuests);
             currentConversationState = null;
             currentRuntimeEntry = null;
@@ -241,6 +309,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                     ResetConversationNodeEditor();
                     UpdateReferencesByID();
                 }
+                if (syncOnOpen) database.SyncAll();
                 Repaint();
             }
         }
@@ -381,6 +450,10 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 {
                     UpdateConversationTitles();
                     ResetNodeEditorConversationList();
+                }
+                if (toolbar.current == Toolbar.Tab.Database)
+                {
+                    ResetDatabaseTab();
                 }
                 if (toolbar.Current == Toolbar.Tab.Items)
                 {

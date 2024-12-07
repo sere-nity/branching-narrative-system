@@ -70,7 +70,7 @@ namespace Contagion.Lua_Interfacing
         {
             List<string> ingredients = new List<string>();
             
-            for (int i = 1; i <= INGREDIENT_LIST_MAX; i++)
+            for (int i = 0; i < INGREDIENT_LIST_MAX; i++)
             {
                 // Gets the string that is stored in the articy field ingredient1-10
                 string variableName = Field.LookupValue(entry.fields, ingredientFieldList[i]);
@@ -91,14 +91,15 @@ namespace Contagion.Lua_Interfacing
         {
             List<string> missingIngredients = new List<string>();
         
-            for (int i = 1; i <= 10; i++)
+            for (int i = 0; i < INGREDIENT_LIST_MAX; i++)
             {
                 // Gets the string that is stored in the articy field ingredient1-10
                 string variableName = Field.LookupValue(entry.fields, ingredientFieldList[i]);
             
                 if (!string.IsNullOrEmpty(variableName))
                 {
-                    // Check if the Lua variable is false
+                    // Check if the Lua variable is false i.e. if the player doesn't 
+                    // heve the item in their inventory (indicated by articy variables) 
                     if (!Lua.IsTrue(variableName))
                     {
                         string ingredientName = variableName.Substring(INVENTORY_PREFIX.Length);

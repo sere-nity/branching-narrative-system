@@ -21,7 +21,7 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public static Dictionary<Texture2D, Sprite> spriteCache = new Dictionary<Texture2D, Sprite>();
 
-#if UNITY_2019_3_OR_NEWER
+#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void InitStaticVariables()
         {
@@ -34,18 +34,7 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public static void RequireEventSystem()
         {
-            var eventSystem = GameObject.FindObjectOfType<UnityEngine.EventSystems.EventSystem>();
-            if (eventSystem == null)
-            {
-                if (DialogueDebug.logWarnings) Debug.LogWarning(DialogueDebug.Prefix + ": The scene is missing an EventSystem. Adding one.");
-#if USE_NEW_INPUT
-                new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem),
-                               typeof(UnityEngine.InputSystem.UI.InputSystemUIInputModule));
-#else
-                new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem),
-                               typeof(UnityEngine.EventSystems.StandaloneInputModule));
-#endif
-            }
+            UIUtility.RequireEventSystem(DialogueDebug.logWarnings ? "Dialogue System: The scene is missing an EventSystem. Adding one." : null);
         }
 
         /// <summary>
@@ -127,6 +116,7 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public static void SendTextChangeMessage(UnityEngine.UI.Text text)
         {
+            if (!Application.isPlaying) return;
             if (text == null) return;
             if (dialogueUI == null) dialogueUI = text.GetComponentInParent<AbstractDialogueUI>();
             if (dialogueUI == null) return;
@@ -138,6 +128,7 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public static void SendTextChangeMessage(UITextField textField)
         {
+            if (!Application.isPlaying) return;
             if (textField.gameObject == null) return;
             textField.gameObject.SendMessage(DialogueSystemMessages.OnTextChange, textField, SendMessageOptions.DontRequireReceiver);
         }
@@ -147,17 +138,10 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         /// <param name="selectable"></param>
         /// <param name="allowStealFocus"></param>
-        public static void Select(UnityEngine.UI.Selectable selectable, bool allowStealFocus = true)
+        public static void Select(UnityEngine.UI.Selectable selectable, bool allowStealFocus = true,
+            UnityEngine.EventSystems.EventSystem eventSystem = null)
         {
-            var currentEventSystem = UnityEngine.EventSystems.EventSystem.current;
-            if (currentEventSystem == null || selectable == null) return;
-            if (currentEventSystem.alreadySelecting) return;
-            if (currentEventSystem.currentSelectedGameObject == null || allowStealFocus)
-            {
-                currentEventSystem.SetSelectedGameObject(selectable.gameObject);
-                selectable.Select();
-                selectable.OnSelect(null);
-            }
+            UIUtility.Select(selectable, allowStealFocus, eventSystem);
         }
 
         public const string RPGMakerCodeQuarterPause = @"\,";
@@ -230,6 +214,16 @@ namespace PixelCrushers.DialogueSystem
                 if (graphicRaycaster != null) graphicRaycaster.enabled = true;
             }
         }
+
+        public static bool CanBeSuperceded(UIVisibility visibility)
+        {
+            return
+                visibility == UIVisibility.UntilSuperceded ||
+                visibility == UIVisibility.UntilSupercededOrActorChange ||
+                visibility == UIVisibility.UntilSupercededOrActorChangeOrMenu;
+        }
+
+
 
     }
 

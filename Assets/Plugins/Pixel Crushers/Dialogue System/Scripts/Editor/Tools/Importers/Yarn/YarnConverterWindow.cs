@@ -58,6 +58,8 @@ namespace PixelCrushers.DialogueSystem.Yarn
         // public string customCommandsSourceFile;
         public string customCommandsSourceFile = DefaultCustomCommandsSourceFile;
 
+        public string prefsPath;
+
         /// <summary>
         /// The name of the player's actor.
         /// </summary>
@@ -67,7 +69,7 @@ namespace PixelCrushers.DialogueSystem.Yarn
     public class YarnConverterWindow : AbstractConverterWindow<YarnConverterPrefs>
     {
 
-        [MenuItem("Tools/Pixel Crushers/Dialogue System/Import/Yarn", false, 1)]
+        [MenuItem("Tools/Pixel Crushers/Dialogue System/Import/Yarn...", false, 1)]
         public static void Init()
         {
             var window = EditorWindow.GetWindow(typeof(YarnConverterWindow), false, "Yarn Importer");
@@ -166,6 +168,9 @@ namespace PixelCrushers.DialogueSystem.Yarn
         private string lastVisitedYarnSourceDirectory;
         private string lastVisitedLocalizedFileDirectory;
 
+        protected static GUIContent SavePrefsLabel = new GUIContent("Save Prefs...", "Save import settings to JSON file.");
+        protected static GUIContent LoadPrefsLabel = new GUIContent("Load Prefs...", "Load import settings from JSON file.");
+
         public void PopulateDefaultPrefs()
         {
             prefs.playerName = YarnConverterPrefs.DefaultPlayerName;
@@ -200,23 +205,22 @@ namespace PixelCrushers.DialogueSystem.Yarn
 
             // PopulateDefaultPrefs(); // Comment this out for production, only use for testing
 
-            if (uiYarnSourceFileList == null)
-            {
-                uiYarnSourceFileList = new ReorderableList(prefs.sourceFiles, typeof(string), true, true, true, true);
-                uiYarnSourceFileList.drawHeaderCallback += DrawYarnSourceFileListHeader; // Skip this line if you set displayHeader to 'false' in your ReorderableList constructor.
-                uiYarnSourceFileList.drawElementCallback += DrawYarnSourceFileListItem; // Delegate to draw the elements on the list
-                uiYarnSourceFileList.onAddCallback += AddYarnSourceFileListItem; // Add stuff
-                lastVisitedYarnSourceDirectory = (prefs.sourceFiles.Count > 0) ? Path.GetDirectoryName(prefs.sourceFiles[prefs.sourceFiles.Count - 1]) : "Assets";
-            }
+            InitializeReorderableLists();
+        }
 
-            if (uiLocalizedFileList == null)
-            {
-                uiLocalizedFileList = new ReorderableList(prefs.localizedStringFiles, typeof(string), true, true, true, true);
-                uiLocalizedFileList.drawHeaderCallback += DrawLocalizedFileListHeader; // Skip this line if you set displayHeader to 'false' in your ReorderableList constructor.
-                uiLocalizedFileList.drawElementCallback += DrawLocalizedFileListItem; // Delegate to draw the elements on the list
-                uiLocalizedFileList.onAddCallback += AddLocalizedFileListItem; // Add stuff
-                lastVisitedLocalizedFileDirectory = (prefs.localizedStringFiles.Count > 0) ? Path.GetDirectoryName(prefs.localizedStringFiles[prefs.localizedStringFiles.Count - 1]) : "Assets";
-            }
+        protected void InitializeReorderableLists()
+        {
+            uiYarnSourceFileList = new ReorderableList(prefs.sourceFiles, typeof(string), true, true, true, true);
+            uiYarnSourceFileList.drawHeaderCallback += DrawYarnSourceFileListHeader; // Skip this line if you set displayHeader to 'false' in your ReorderableList constructor.
+            uiYarnSourceFileList.drawElementCallback += DrawYarnSourceFileListItem; // Delegate to draw the elements on the list
+            uiYarnSourceFileList.onAddCallback += AddYarnSourceFileListItem; // Add stuff
+            lastVisitedYarnSourceDirectory = (prefs.sourceFiles.Count > 0) ? Path.GetDirectoryName(prefs.sourceFiles[prefs.sourceFiles.Count - 1]) : "Assets";
+
+            uiLocalizedFileList = new ReorderableList(prefs.localizedStringFiles, typeof(string), true, true, true, true);
+            uiLocalizedFileList.drawHeaderCallback += DrawLocalizedFileListHeader; // Skip this line if you set displayHeader to 'false' in your ReorderableList constructor.
+            uiLocalizedFileList.drawElementCallback += DrawLocalizedFileListItem; // Delegate to draw the elements on the list
+            uiLocalizedFileList.onAddCallback += AddLocalizedFileListItem; // Add stuff
+            lastVisitedLocalizedFileDirectory = (prefs.localizedStringFiles.Count > 0) ? Path.GetDirectoryName(prefs.localizedStringFiles[prefs.localizedStringFiles.Count - 1]) : "Assets";
         }
 
         protected override void DrawControls()
@@ -259,7 +263,6 @@ namespace PixelCrushers.DialogueSystem.Yarn
 
             prefs.sourceFiles[index] = EditorGUI.TextField(new Rect(rect.x, rect.y + 2, rect.width, EditorGUIUtility.singleLineHeight), GUIContent.none, prefs.sourceFiles[index]);
         }
-
 
         private void AddYarnSourceFileListItem(ReorderableList list)
         {
@@ -312,6 +315,100 @@ namespace PixelCrushers.DialogueSystem.Yarn
                 prefs.localizedStringFiles.Add(displayPath);
                 lastVisitedLocalizedFileDirectory = Path.GetDirectoryName(fullPath);
             }
+        }
+
+        protected override void DrawOverwriteCheckbox()
+        {
+            prefs.overwrite = EditorGUILayout.Toggle(new GUIContent("Overwrite", "Overwrite database if it already exists"),
+                                                     prefs.overwrite);
+            if (prefs.overwrite)
+            {
+                prefs.merge = EditorGUILayout.Toggle(new GUIContent("Merge Variables", "Merge variables into existing database instead of overwriting"),
+                                                     prefs.merge);
+            }
+        }
+
+        protected override void DrawConversionButtons()
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            DrawSaveLoadPrefsButtons();
+            DrawClearButton();
+            DrawConvertButton();
+            EditorGUILayout.EndHorizontal();
+        }
+
+        protected void DrawSaveLoadPrefsButtons()
+        {
+            if (GUILayout.Button(SavePrefsLabel, GUILayout.Width(100)))
+            {
+                var path = EditorUtility.SaveFilePanel("Save Import Settings",
+                    System.IO.Path.GetDirectoryName(prefs.prefsPath), System.IO.Path.GetFileName(prefs.prefsPath), "json");
+                if (!string.IsNullOrEmpty(path))
+                {
+                    prefs.prefsPath = path;
+                    System.IO.File.WriteAllText(path, JsonUtility.ToJson(prefs));
+                }
+            }
+            if (GUILayout.Button(LoadPrefsLabel, GUILayout.Width(100)))
+            {
+                var path = EditorUtility.OpenFilePanel("Load Import Settings",
+                    System.IO.Path.GetDirectoryName(prefs.prefsPath), "json");
+                if (!string.IsNullOrEmpty(path))
+                {
+                    var newPrefs = JsonUtility.FromJson<YarnConverterPrefs>(System.IO.File.ReadAllText(path));
+                    if (newPrefs == null)
+                    {
+                        EditorUtility.DisplayDialog("Load Failed", $"Could not load Yarn import settings from {path}.", "OK");
+                    }
+                    else
+                    {
+                        prefs = newPrefs;
+                        prefs.prefsPath = path;
+                        InitializeReorderableLists();
+                    }
+                }
+            }
+        }
+
+        protected override DialogueDatabase LoadOrCreateDatabase()
+        {
+            string assetPath = string.Format("{0}/{1}.asset", prefs.outputFolder, prefs.databaseFilename);
+            DialogueDatabase database = null;
+            if (prefs.overwrite)
+            {
+                database = AssetDatabase.LoadAssetAtPath(assetPath, typeof(DialogueDatabase)) as DialogueDatabase;
+                // if ((database != null) && !prefs.merge) database.Clear();
+                if (database != null)
+                {
+                    // NOTE: The only thing we'll keep in a DB merge is variables.
+                    //       That way they stay persistent between imports.
+                    if (!prefs.merge)
+                    {
+                        database.variables.Clear();
+                    }
+
+                    database.actors.Clear();
+                    database.items.Clear();
+                    database.locations.Clear();
+                    database.conversations.Clear();
+                    database.ResetCache();
+                }
+            }
+            if (database == null)
+            {
+                assetPath = AssetDatabase.GenerateUniqueAssetPath(string.Format("{0}/{1}.asset", prefs.outputFolder, prefs.databaseFilename));
+                database = DatabaseUtility.CreateDialogueDatabaseInstance();
+                database.name = prefs.databaseFilename;
+                AssetDatabase.CreateAsset(database, assetPath);
+            }
+            return database;
+        }
+
+        protected override void ClearPrefs()
+        {
+            base.ClearPrefs();
+            InitializeReorderableLists();
         }
 
         protected override bool IsReadyToConvert()

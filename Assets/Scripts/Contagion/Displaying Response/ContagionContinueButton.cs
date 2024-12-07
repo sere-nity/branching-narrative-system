@@ -7,14 +7,26 @@ namespace Contagion
     {
         private Button button;
         private ContinueState state = ContinueState.DISABLED;
+        private ConversationLogger conversationLogger;
 
 
         private void Awake()
         {
             button = GetComponent<Button>();
+            conversationLogger = FindObjectOfType<ConversationLogger>();
+
+        }
+        
+        public void OnContinueClicked()
+        {
+            if (state != ContinueState.DISABLED)
+            {
+                // Tell UnityUIDialogueUI to continue
+                conversationLogger.unityUI.OnContinue();
+            }
         }
 
-        private void SetInteractable(bool interactable)
+        public void SetInteractable(bool interactable)
         {
             if (button != null) button.interactable = interactable;
         }

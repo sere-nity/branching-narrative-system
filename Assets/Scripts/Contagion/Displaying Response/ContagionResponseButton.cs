@@ -49,7 +49,7 @@ namespace Contagion
                 Debug.LogWarning("ContagionResponseButton: DialogueEntry is null");
                 return;
             }
-            if (CraftingCheckManager.IsCraftingCheck(entry))
+            if (CraftingCheckNode.IsCraftingCheck(entry))
             {
                 isCraftingCheck = true;
                 StyleAsCraftingCheck();
@@ -114,9 +114,8 @@ namespace Contagion
             {
                 // Calculate and store result
                 ConversationLogger.lastCheckResult = 
-                    CraftingCheckManager.CheckSuccess(entry);
+                    CraftingCheckNode.CheckSuccess(entry);
             }
-            Debug.Log("About to call OnClick");
             base.OnClick();
         }
     }

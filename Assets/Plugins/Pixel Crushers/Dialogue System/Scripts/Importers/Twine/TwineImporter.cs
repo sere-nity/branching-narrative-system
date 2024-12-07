@@ -21,6 +21,8 @@ namespace PixelCrushers.DialogueSystem.Twine
         protected DialogueDatabase database { get; set; }
         protected Template template { get; set; }
 
+        protected HashSet<int> playerActorIDs = new HashSet<int>();
+
         public virtual void ConvertStoryToConversation(DialogueDatabase database, Template template, TwineStory story, int actorID, int conversantID, bool splitPipesIntoEntries, bool useTwineNodePositions = false)
         {
             this.database = database;
@@ -35,6 +37,14 @@ namespace PixelCrushers.DialogueSystem.Twine
             }
             conversation.ActorID = actorID;
             conversation.ConversantID = conversantID;
+
+            // Record player actorIDs:
+            playerActorIDs.Clear();
+            playerActorIDs.Add(actorID); // Assume actor is Player.
+            database.actors.ForEach(actor =>
+            {
+                if (actor.IsPlayer) playerActorIDs.Add(actor.id);
+            });
 
             // Reset to just <START> node:
             conversation.dialogueEntries.Clear();
@@ -67,10 +77,10 @@ namespace PixelCrushers.DialogueSystem.Twine
                     }
                 }
                 int entryActorID, entryConversantID;
-                string dialogueText, sequence, conditions, script;
+                string dialogueText, sequence, conditions, script, description;
                 List<TwineHook> hooks;
                 ExtractParticipants(passage.text, actorID, conversantID, false, out dialogueText, out entryActorID, out entryConversantID);
-                ExtractSequenceConditionsScript(ref dialogueText, out sequence, out conditions, out script);
+                ExtractSequenceConditionsScriptDescription(ref dialogueText, out sequence, out conditions, out script, out description);
                 ExtractHooks(ref dialogueText, out hooks);
                 allHooks.Add(passage, hooks);
                 dialogueText = RemoveAllLinksFromText(dialogueText);
@@ -85,6 +95,7 @@ namespace PixelCrushers.DialogueSystem.Twine
                 entry.conditionsString = AppendCode(entry.conditionsString, conditions);
                 entry.falseConditionAction = falseConditionAction;
                 entry.userScript = AppendCode(entry.userScript, script);
+                Field.SetValue(entry.fields, DialogueSystemFields.Description, description);
                 conversation.dialogueEntries.Add(entry);
             }
 
@@ -115,9 +126,9 @@ namespace PixelCrushers.DialogueSystem.Twine
                     }
                     else
                     {
-                        // Check if there's a node that's a repeat of the link (and, if so, don't add a link entry):
+                        // Check if there's a node that's a repeat of the link and is assigned to a player actor (if so, don't add a link entry):
                         var linkRepeatEntry = conversation.GetDialogueEntry(link.name);
-                        if (linkRepeatEntry != null && linkRepeatEntry.ActorID == conversation.ActorID)
+                        if (linkRepeatEntry != null && playerActorIDs.Contains(linkRepeatEntry.ActorID))
                         {
                             // Link links to node for that link (to allow Script: etc in link), so do nothing.
                             var linkEntry = linkRepeatEntry;
@@ -127,9 +138,9 @@ namespace PixelCrushers.DialogueSystem.Twine
                                 linkNum++;
                             }
                             int linkActorID, linkConversantID;
-                            string linkDialogueText, sequence, conditions, script;
+                            string linkDialogueText, sequence, conditions, script, description;
                             ExtractParticipants(link.name, actorID, conversantID, true, out linkDialogueText, out linkActorID, out linkConversantID);
-                            ExtractSequenceConditionsScript(ref linkDialogueText, out sequence, out conditions, out script);
+                            ExtractSequenceConditionsScriptDescription(ref linkDialogueText, out sequence, out conditions, out script, out description);
                             linkEntry.DialogueText = ReplaceFormatting(linkDialogueText);
                             linkEntry.ActorID = linkActorID;
                             linkEntry.ConversantID = linkConversantID;
@@ -152,9 +163,9 @@ namespace PixelCrushers.DialogueSystem.Twine
                                     linkNum++;
                                 }
                                 int linkActorID, linkConversantID;
-                                string linkDialogueText, sequence, conditions, script;
+                                string linkDialogueText, sequence, conditions, script, description;
                                 ExtractParticipants(link.name, actorID, conversantID, true, out linkDialogueText, out linkActorID, out linkConversantID);
-                                ExtractSequenceConditionsScript(ref linkDialogueText, out sequence, out conditions, out script);
+                                ExtractSequenceConditionsScriptDescription(ref linkDialogueText, out sequence, out conditions, out script, out description);
                                 linkEntry.DialogueText = ReplaceFormatting(linkDialogueText);
                                 linkEntry.ActorID = linkActorID;
                                 linkEntry.ConversantID = linkConversantID;
@@ -179,40 +190,49 @@ namespace PixelCrushers.DialogueSystem.Twine
                 var passageID = SafeConvert.ToInt(passage.pid);
                 var passageEntry = conversation.GetDialogueEntry(passageID);
                 var rectOffset = Vector2.zero;
-                foreach (var hook in allHooks[passage])
+                var passageHooks = allHooks[passage];
+                foreach (var hook in passageHooks)
                 {
                     int hookActorID, hookConversantID;
                     ExtractParticipants(hook.text, passageEntry.ActorID, passageEntry.ConversantID, true, out hook.text, out hookActorID, out hookConversantID);
                     var conditions = hook.prefix.StartsWith("(if:") ? ConvertIfMacro(hook.prefix) : string.Empty;
-                    foreach (var link in hook.links)
+                    if (hook.links.Count == 0)
                     {
-                        var linkEntry = conversation.GetDialogueEntry(GetLinkEntryTitle(link, passageID));
-                        if (!string.IsNullOrEmpty(hook.text))
+                        var linkEntry = conversation.GetDialogueEntry(GetLinkEntryTitle(hook.text, passageID));
+                        if (linkEntry != null) linkEntry.conditionsString = conditions;
+                    }
+                    else
+                    {
+                        foreach (var link in hook.links)
                         {
-                            // Hook still has text, so make the text an intermediate entry:
-                            var midEntry = template.CreateDialogueEntry(++highestPid, conversation.id, hook.text);
-                            if (useTwineNodePositions)
+                            var linkEntry = conversation.GetDialogueEntry(GetLinkEntryTitle(link, passageID));
+                            if (!string.IsNullOrEmpty(hook.text))
                             {
-                                SetEntryPosition(linkEntry, new TwinePosition(passage.position.x + DialogueEntry.CanvasRectWidth / 4f + (linkNum * (DialogueEntry.CanvasRectWidth + 8)), passage.position.y + (1.5f * DialogueEntry.CanvasRectHeight)));
-                                linkNum++;
+                                // Hook still has text, so make the text an intermediate entry:
+                                var midEntry = template.CreateDialogueEntry(++highestPid, conversation.id, hook.text);
+                                if (useTwineNodePositions)
+                                {
+                                    SetEntryPosition(linkEntry, new TwinePosition(passage.position.x + DialogueEntry.CanvasRectWidth / 4f + (linkNum * (DialogueEntry.CanvasRectWidth + 8)), passage.position.y + (1.5f * DialogueEntry.CanvasRectHeight)));
+                                    linkNum++;
+                                }
+                                midEntry.DialogueText = hook.text;
+                                midEntry.ActorID = hookActorID;
+                                midEntry.ConversantID = hookConversantID;
+
+                                string falseConditionAction;
+                                CheckConditionsForPassthrough(conditions, out conditions, out falseConditionAction);
+                                midEntry.conditionsString = AppendCode(midEntry.conditionsString, conditions);
+                                midEntry.falseConditionAction = falseConditionAction;
+
+                                conversation.dialogueEntries.Add(midEntry);
+                                passageEntry.outgoingLinks.Add(new Link(conversation.id, passageEntry.id, conversation.id, midEntry.id));
                             }
-                            midEntry.DialogueText = hook.text;
-                            midEntry.ActorID = hookActorID;
-                            midEntry.ConversantID = hookConversantID;
-
-                            string falseConditionAction;
-                            CheckConditionsForPassthrough(conditions, out conditions, out falseConditionAction);
-                            midEntry.conditionsString = AppendCode(midEntry.conditionsString, conditions);
-                            midEntry.falseConditionAction = falseConditionAction;
-
-                            conversation.dialogueEntries.Add(midEntry);
-                            passageEntry.outgoingLinks.Add(new Link(conversation.id, passageEntry.id, conversation.id, midEntry.id));
-                        }
-                        else
-                        {
-                            // Otherwise link directly from passage to link entry:
-                            linkEntry.conditionsString = conditions;
-                            passageEntry.outgoingLinks.Add(new Link(conversation.id, passageEntry.id, conversation.id, linkEntry.id));
+                            else
+                            {
+                                // Otherwise link directly from passage to link entry:
+                                linkEntry.conditionsString = conditions;
+                                passageEntry.outgoingLinks.Add(new Link(conversation.id, passageEntry.id, conversation.id, linkEntry.id));
+                            }
                         }
                     }
                 }
@@ -264,11 +284,12 @@ namespace PixelCrushers.DialogueSystem.Twine
             dialogueText = dialogueText.Trim();
         }
 
-        protected virtual void ExtractSequenceConditionsScript(ref string text, out string sequence, out string conditions, out string script)
+        protected virtual void ExtractSequenceConditionsScriptDescription(ref string text, out string sequence, out string conditions, out string script, out string description)
         {
             ExtractBlock("Sequence:", ref text, out sequence);
             ExtractBlock("Conditions:", ref text, out conditions);
             ExtractBlock("Script:", ref text, out script);
+            ExtractBlock("Description:", ref text, out description);
         }
 
         protected virtual void ExtractBlock(string heading, ref string text, out string block)
@@ -280,6 +301,7 @@ namespace PixelCrushers.DialogueSystem.Twine
                 var sequenceIndex = FindBlockIndex(text, blockIndex, "Sequence:");
                 var conditionsIndex = FindBlockIndex(text, blockIndex, "Conditions:");
                 var scriptIndex = FindBlockIndex(text, blockIndex, "Script:");
+                var descriptionIndex = FindBlockIndex(text, blockIndex, "Description:");
                 var rindex = Mathf.Min(sequenceIndex, Mathf.Min(conditionsIndex, scriptIndex));
                 block = text.Substring(blockIndex, rindex - blockIndex).Trim();
                 var remaining = text.Substring(0, index);
@@ -348,12 +370,29 @@ namespace PixelCrushers.DialogueSystem.Twine
                 var index = match.Value.IndexOf(")[");
                 if (index == -1) continue;
                 var prefix = match.Value.Substring(0, index + 1);
-                var hookText = match.Value.Substring(index + 2, match.Length - (prefix.Length + 3)).Trim();
+                var hookText = match.Value.Substring(index + 2, match.Length - (prefix.Length + 2)).Trim();
+                var isLink = hookText.StartsWith("[");
+                if (hookText.StartsWith("[")) hookText = hookText.Substring(1);
+                if (hookText.EndsWith("]")) hookText = hookText.Substring(0, hookText.Length - 1);
                 List<string> links;
                 ExtractLinksFromText(ref hookText, out links);
                 hookText = ReplaceFormatting(hookText);
                 hooks.Add(new TwineHook(prefix, hookText, links));
-                text = Replace(text, match.Index, match.Length, string.Empty);
+
+                var newlinePos = match.Index + match.Length;
+                var hasNewline = 0 <= newlinePos && newlinePos < text.Length && text[newlinePos] == '\n';
+
+                string replacement = string.Empty;
+                if (!(isLink || string.IsNullOrEmpty(hookText)))
+                {
+                    // Note: Conditiona() changed -- now expects a bool for first parameter.
+                    var condition = ConvertIfMacro(prefix);
+                    var cleanHookText = hookText.Replace("\"", "\\\"");
+                    if (hasNewline) cleanHookText += "\\n";
+                    replacement = "[lua(Conditional(" + condition + ", \"" + cleanHookText + "\"))]";
+                }
+
+                text = Replace(text, match.Index, match.Length + (hasNewline ? 1 : 0), replacement);
             }
         }
 
@@ -385,6 +424,7 @@ namespace PixelCrushers.DialogueSystem.Twine
 
         protected bool IsLinkImplicit(TwineLink link)
         {
+            if (link.name == null) return true;
             return (link.name.Length > 2) && (link.name[0] == '(') && (link.name[link.name.Length - 1] == ')');
         }
 
@@ -527,9 +567,14 @@ namespace PixelCrushers.DialogueSystem.Twine
         {
             var s = macro.Trim();
             s = s.Substring(0, s.Length - 1); // Remove last paren.
-            var tokens = s.Split(' ');
+
+            // Insert space in case there's no space between if: and condition:
+            var colonPos = s.IndexOf(':');
+            if (colonPos != -1 && !s.Contains(": ")) s = s.Substring(0, colonPos + 1) + ' ' + s.Substring(colonPos + 1);
+
+            var tokens = s.Split(new char[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
             if (tokens.Length < 4) return macro;
-            // [0](if [1]$var [2]is [3+]condition
+            // Indices: [0](if [1]$var [2]is [3+]condition
             var lua = ConvertVariableToLua(tokens[1]) + " ==";
             for (int i = 3; i < tokens.Length; i++)
             {

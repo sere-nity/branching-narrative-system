@@ -1,7 +1,4 @@
-// Recompile at 06/11/2024 17:43:19
-
-
-// Copyright (c) Pixel Crushers. All rights reserved.
+﻿// Copyright (c) Pixel Crushers. All rights reserved.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -77,7 +74,10 @@ namespace PixelCrushers.DialogueSystem
         {
             get
             {
-                if (m_textComponent == null) m_textComponent = GetComponent<TMPro.TMP_Text>();
+                if (m_textComponent == null && gameObject != null)
+                {
+                    m_textComponent = GetComponent<TMPro.TMP_Text>();
+                }
                 return m_textComponent;
             }
         }
@@ -87,7 +87,7 @@ namespace PixelCrushers.DialogueSystem
         {
             get
             {
-                if (m_layoutElement == null)
+                if (m_layoutElement == null && gameObject != null)
                 {
                     m_layoutElement = GetComponent<LayoutElement>();
                     if (m_layoutElement == null) m_layoutElement = gameObject.AddComponent<LayoutElement>();
@@ -100,7 +100,10 @@ namespace PixelCrushers.DialogueSystem
         {
             get
             {
-                if (audioSource == null) audioSource = GetComponent<AudioSource>();
+                if (audioSource == null && gameObject != null)
+                {
+                    audioSource = GetComponent<AudioSource>();
+                }
                 if (audioSource == null && (audioClip != null))
                 {
                     audioSource = gameObject.AddComponent<AudioSource>();
@@ -118,7 +121,7 @@ namespace PixelCrushers.DialogueSystem
 
         public override void Awake()
         {
-
+            base.Awake();
             if (removeDuplicateTypewriterEffects) RemoveIfDuplicate();
         }
 
@@ -240,7 +243,7 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public virtual IEnumerator Play(int fromIndex)
         {
-            if ((textComponent != null) && (charactersPerSecond > 0))
+            if ((textComponent != null) && (charactersPerSecond > 0) && !string.IsNullOrEmpty(textComponent.text))
             {
                 if (waitOneFrameBeforeStarting) yield return null;
                 textComponent.text = textComponent.text.Replace("<br>", "\n");
@@ -258,6 +261,7 @@ namespace PixelCrushers.DialogueSystem
                 textComponent.maxVisibleCharacters = fromIndex;
                 textComponent.ForceMeshUpdate();
                 TMPro.TMP_TextInfo textInfo = textComponent.textInfo;
+                if (textInfo == null) yield break;
                 var parsedText = textComponent.GetParsedText();
                 int totalVisibleCharacters = textInfo.characterCount; // Get # of Visible Character in text object
                 charactersTyped = fromIndex;
@@ -280,10 +284,10 @@ namespace PixelCrushers.DialogueSystem
                                     switch (token)
                                     {
                                         case RPGMakerTokenType.QuarterPause:
-                                            yield return DialogueTime.WaitForSeconds(quarterPauseDuration);
+                                            yield return PauseForDuration(quarterPauseDuration);
                                             break;
                                         case RPGMakerTokenType.FullPause:
-                                            yield return DialogueTime.WaitForSeconds(fullPauseDuration);
+                                            yield return PauseForDuration(fullPauseDuration);
                                             break;
                                         case RPGMakerTokenType.SkipToEnd:
                                             charactersTyped = totalVisibleCharacters - 1;
@@ -324,6 +328,7 @@ namespace PixelCrushers.DialogueSystem
                     }
                     textComponent.maxVisibleCharacters = charactersTyped;
                     HandleAutoScroll();
+                    textComponent.ForceMeshUpdate(); // Must force every time in case something is animating TMPro (e.g., scale).
                     //---Uncomment the line below to debug: 
                     //Debug.Log(textComponent.text.Substring(0, charactersTyped).Replace("<", "[").Replace(">", "]") + " (typed=" + charactersTyped + ")");
                     lastTime = DialogueTime.time;
@@ -422,13 +427,14 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public override void Stop()
         {
-            if (isPlaying)
+            var wasPlaying = isPlaying;
+            StopTypewriterCoroutine();
+            if (wasPlaying)
             {
                 onEnd.Invoke();
                 Sequencer.Message(SequencerMessages.Typed);
             }
-            StopTypewriterCoroutine();
-            if (textComponent != null) 
+            if (textComponent != null && textComponent.textInfo != null) 
             {
                 textComponent.maxVisibleCharacters = textComponent.textInfo.characterCount;
                 textComponent.ForceMeshUpdate();

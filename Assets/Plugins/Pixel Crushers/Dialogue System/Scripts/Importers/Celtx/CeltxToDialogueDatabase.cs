@@ -31,15 +31,13 @@ namespace PixelCrushers.DialogueSystem.Celtx
                 ProcessCxCatalog(cxMetadata);
                 ProcessCxVariables(cxMetadata);
                 ProcessCxConditions(cxMetadata);
+
                 List<CxContent> sequenceList = docContentList.Where(c => c.type.Equals("cxsequence")).ToList();
-
-                ProcessSequenceListFirstPass(sequenceList);
-
-                //sequenceList.ForEach(c => ProcessCeltxSequenceNode(c));
-
-                //ResolvePendingLinks();
+                ProcessSequenceList(sequenceList);
 
                 if (checkSequenceSyntax) CheckSequenceSyntax();
+
+                ConvertBlankNodesToGroupNodes();
             }
             catch (System.Exception e)
             {
@@ -119,7 +117,7 @@ namespace PixelCrushers.DialogueSystem.Celtx
                 return;
             }
 
-            
+
             foreach (CxContent contentObject in cxConditionsContent)
             {
                 ExtractCeltxCondition(contentObject.attrs);
@@ -142,114 +140,55 @@ namespace PixelCrushers.DialogueSystem.Celtx
             Field.SetValue(fields, title, updatedString, fieldType);
         }
 
-#region CxSequence Processing
+        #region CxSequence Processing
 
-        private void ProcessSequenceListFirstPass(List<CxContent> sequenceList)
+        private void ProcessSequenceList(List<CxContent> sequenceList)
         {
-            sequenceList.ForEach(c => FirstPassSequenceProcessing(c));
-            celtxData.sequenceProcessingFirstPassItems.ForEach(i => CheckIfRoot(i));
+            sequenceList.ForEach(c => ExtractSequenceLinkingData(c));
 
-            List<SequenceProcessingFirstPassItem> rootItems = celtxData.sequenceProcessingFirstPassItems.Where(i => i.isRoot).ToList();
+            celtxData.sequenceLinkingDataList.ForEach(i => CheckIfRoot(i));
+            List<SequenceLinkingData> rootItems = celtxData.sequenceLinkingDataList.Where(i => i.isRoot).ToList();
 
             rootItems.ForEach(i => ProcessConversation(i, sequenceList));
         }
 
-        private void FirstPassSequenceProcessing(CxContent cxSequenceContentObject)
-        {
-            SequenceProcessingFirstPassItem seqItem = new SequenceProcessingFirstPassItem();
-            seqItem.id = cxSequenceContentObject.attrs.id;
-            seqItem.name = cxSequenceContentObject.attrs.name;
-            if (cxSequenceContentObject.attrs.transitions != null && cxSequenceContentObject.attrs.transitions.Count == 1 && cxSequenceContentObject.attrs.transitions[0].id != null)
-            {
-                seqItem.linkedIds.Add(cxSequenceContentObject.attrs.transitions[0].id);     
-            }
-
-            // TODO: Resilience for these checks for IDs similar to what transitions have
-            List<CxContent> cxBranches = cxSequenceContentObject.content[0].content.Where(c => c.type.Equals("cxbranch")).ToList();
-            if (cxBranches.Count > 0)
-            {
-                foreach(CxContent branch in cxBranches)
-                {
-                    foreach(CxLinked linkedItem in branch.attrs.linked)
-                    {
-                        seqItem.linkedIds.Add(linkedItem.id);
-                    }
-                }
-            }
-
-            List<CxContent> cxJumps = cxSequenceContentObject.content[0].content.Where(c => c.type.Equals("cxjump")).ToList();
-            if (cxJumps.Count > 0)
-            {
-                foreach (CxContent jump in cxJumps)
-                {
-                    seqItem.linkedIds.Add(jump.attrs.linked_jump.id);
-                }
-            }
-
-            celtxData.idsWithIncomingLinks.AddRange(seqItem.linkedIds);
-
-            celtxData.sequenceProcessingFirstPassItems.Add(seqItem);
-        }
-
-        public void CheckIfRoot(SequenceProcessingFirstPassItem i)
-        {
-            if (!celtxData.idsWithIncomingLinks.Contains(i.id))
-            {
-                i.isRoot = true;
-            }
-        }
-
-        public void ProcessConversation(SequenceProcessingFirstPassItem i, List<CxContent> sequenceList) 
-        {
-            string sequenceId = i.id;
-            CxContent cxSequenceContentObject = sequenceList.Find(c => c.attrs.id.Equals(i.id));
-            DialogueEntry lastEntry = ProcessConversationRootNodeNew(cxSequenceContentObject, sequenceId);
-            if (lastEntry == null) return;
-
-            ProcessConversationBranch(sequenceId, lastEntry, i, sequenceList);
-        }
-
-        public void ProcessConversationBranch(string sourceCxId, DialogueEntry lastEntry, SequenceProcessingFirstPassItem i, List<CxContent> sequenceList)
-        {
-
-            foreach (string linkedSequenceId in i.linkedIds)
-            {
-                if (i.linksProcessed.Contains(linkedSequenceId))
-                {
-                    continue;
-                }
-                SequenceProcessingFirstPassItem nextItem = celtxData.sequenceProcessingFirstPassItems.Find(o => o.id.Equals(linkedSequenceId));
-                if (!nextItem.isRoot)
-                {
-                    CxContent nextCxSequenceContentObject = sequenceList.Find(c => c.attrs.id.Equals(nextItem.id));
-                    
-                    DialogueEntry newLastEntry = ProcessNonRootSequenceNodeNew(nextCxSequenceContentObject, nextItem, lastEntry, sourceCxId);
-                    if (newLastEntry != null)
-                    {
-                        ProcessConversationBranch(nextCxSequenceContentObject.attrs.id, newLastEntry, nextItem, sequenceList);
-                    }
-                }
-                i.linksProcessed.Add(linkedSequenceId);
-            }
-            i.sequenceProcessingComplete = true;
-        }
-
-        private void ProcessCeltxSequenceNode(CxContent cxSequenceContentObject)
+        private void ExtractSequenceLinkingData(CxContent cxSequenceContentObject)
         {
             try
             {
-                string sequenceId = cxSequenceContentObject.attrs.id;
+                SequenceLinkingData sequenceLinkingData = new SequenceLinkingData();
+                sequenceLinkingData.id = cxSequenceContentObject.attrs.id;
+                sequenceLinkingData.name = cxSequenceContentObject.attrs.name;
 
-                List<DialogueEntry> parentsPendingLinkToSequenceId = GetParentEntries(sequenceId);
+                if (cxSequenceContentObject.attrs.transitions != null && cxSequenceContentObject.attrs.transitions.Count == 1 && cxSequenceContentObject.attrs.transitions[0].id != null)
+                {
+                    sequenceLinkingData.linkedIds.Add(cxSequenceContentObject.attrs.transitions[0].id);
+                }
 
-                if (parentsPendingLinkToSequenceId.Count > 0)
+                List<CxContent> cxBranches = cxSequenceContentObject.content[0].content.Where(c => c.type.Equals("cxbranch")).ToList();
+                if (cxBranches != null && cxBranches.Count > 0)
                 {
-                    ProcessNonRootSequenceNode(cxSequenceContentObject, sequenceId, parentsPendingLinkToSequenceId);
+                    foreach (CxContent branch in cxBranches)
+                    {
+                        foreach (CxLinked linkedItem in branch.attrs.linked)
+                        {
+                            sequenceLinkingData.linkedIds.Add(linkedItem.id);
+                        }
+                    }
                 }
-                else
+
+                List<CxContent> cxJumps = cxSequenceContentObject.content[0].content.Where(c => c.type.Equals("cxjump")).ToList();
+                if (cxJumps != null && cxJumps.Count > 0)
                 {
-                    ProcessConversationRootNode(cxSequenceContentObject, sequenceId);
+                    foreach (CxContent jump in cxJumps)
+                    {
+                        sequenceLinkingData.linkedIds.Add(jump.attrs.linked_jump.id);
+                    }
                 }
+
+                celtxData.idsWithIncomingLinks.AddRange(sequenceLinkingData.linkedIds);
+
+                celtxData.sequenceLinkingDataList.Add(sequenceLinkingData);
             }
             catch (System.Exception e)
             {
@@ -257,7 +196,39 @@ namespace PixelCrushers.DialogueSystem.Celtx
             }
         }
 
-        private DialogueEntry ProcessConversationRootNodeNew(CxContent cxSequenceContentObject, string sequenceId)
+        public void CheckIfRoot(SequenceLinkingData sequenceLinkingData)
+        {
+            try
+            {
+                if (!celtxData.idsWithIncomingLinks.Contains(sequenceLinkingData.id))
+                {
+                    sequenceLinkingData.isRoot = true;
+                }
+            }
+            catch (System.Exception e)
+            {
+                LogError(MethodBase.GetCurrentMethod(), e, sequenceLinkingData.id);
+            }
+        }
+
+        public void ProcessConversation(SequenceLinkingData sequenceLinkingData, List<CxContent> sequenceList)
+        {
+            try
+            {
+                string sequenceId = sequenceLinkingData.id;
+                CxContent cxSequenceContentObject = sequenceList.Find(c => c.attrs.id.Equals(sequenceLinkingData.id));
+                DialogueEntry conversationStartNode = ProcessConversationRootSequence(cxSequenceContentObject, sequenceId);
+                if (conversationStartNode == null) return;
+
+                ProcessConversationChildSequences(sequenceId, conversationStartNode, sequenceLinkingData, sequenceList);
+            }
+            catch (System.Exception e)
+            {
+                LogError(MethodBase.GetCurrentMethod(), e, sequenceLinkingData.id);
+            }
+        }
+
+        private DialogueEntry ProcessConversationRootSequence(CxContent cxSequenceContentObject, string sequenceId)
         {
             try
             {
@@ -292,25 +263,6 @@ namespace PixelCrushers.DialogueSystem.Celtx
                 AddSetVariableScript(startNode, sequenceCatalogId);
 
                 return startNode;
-
-                //if (cxSequenceContentObject.attrs.transitions != null && cxSequenceContentObject.attrs.transitions.Count == 1 && cxSequenceContentObject.attrs.transitions[0].id != null)
-                //{
-                //    AddConditionToPendingLinks(startNode, sequenceId, cxSequenceContentObject.attrs.transitions[0].id, false);
-                //}
-                //else
-                //{
-                //    CxContent jumpData = cxSequenceContentObject.content[0].content.Find(c => c.type.Equals("cxjump"));
-                //    if (jumpData == null)
-                //    {
-                //        LogWarning($"Can't resolve jump from {sequenceName} ({sequenceCatalogId})", sequenceCatalogId, sequenceName);
-                //    }
-                //    else
-                //    {
-                //        List<CxLinked> links = new List<CxLinked>();
-                //        links.Add(new CxLinked(jumpData.attrs.linked_jump.id));
-                //        CreateEntryFromBranchOrJump(jumpData, conversation, startNode, sequenceId, links, true);
-                //    }
-                //}
             }
             catch (System.Exception e)
             {
@@ -319,17 +271,48 @@ namespace PixelCrushers.DialogueSystem.Celtx
             }
         }
 
-        private DialogueEntry ProcessNonRootSequenceNodeNew(CxContent cxSequenceContentObject, SequenceProcessingFirstPassItem item, DialogueEntry parentsPendingLinkToSequenceId, string sourceCxId)
+        public void ProcessConversationChildSequences(string sourceCxId, DialogueEntry lastCreatedDialogueEntry, SequenceLinkingData sequenceLinkingData, List<CxContent> sequenceList)
         {
             try
             {
-                string sequenceId = item.id;
+                foreach (string linkedSequenceId in sequenceLinkingData.linkedIds)
+                {
+                    if (sequenceLinkingData.linksProcessed.Contains(linkedSequenceId))
+                    {
+                        continue;
+                    }
+                    SequenceLinkingData targetSequenceLinkingData = celtxData.sequenceLinkingDataList.Find(o => o.id.Equals(linkedSequenceId));
+                    if (!targetSequenceLinkingData.isRoot)
+                    {
+                        CxContent targetCxSequenceContentObject = sequenceList.Find(c => c.attrs.id.Equals(targetSequenceLinkingData.id));
 
-                string sequenceName = cxSequenceContentObject.attrs.name;
-                string sequenceCatalogId = cxSequenceContentObject.attrs.catalog_id;
+                        DialogueEntry targetSequenceLastCreatedDialogueEntry = ProcessTargetConversationSequence(targetCxSequenceContentObject, targetSequenceLinkingData, lastCreatedDialogueEntry, sourceCxId);
+                        if (targetSequenceLastCreatedDialogueEntry != null)
+                        {
+                            ProcessConversationChildSequences(targetCxSequenceContentObject.attrs.id, targetSequenceLastCreatedDialogueEntry, targetSequenceLinkingData, sequenceList);
+                        }
+                    }
+                    sequenceLinkingData.linksProcessed.Add(linkedSequenceId);
+                }
+                sequenceLinkingData.sequenceProcessingComplete = true;
+            }
+            catch (System.Exception e)
+            {
+                LogError(MethodBase.GetCurrentMethod(), e, sequenceLinkingData.id);
+            }
+        }
+
+        private DialogueEntry ProcessTargetConversationSequence(CxContent targetSequenceContentObject, SequenceLinkingData sequenceLinkingData, DialogueEntry parentDialogueEntry, string sourceCxId)
+        {
+            try
+            {
+                string sequenceId = sequenceLinkingData.id;
+
+                string sequenceName = targetSequenceContentObject.attrs.name;
+                string sequenceCatalogId = targetSequenceContentObject.attrs.catalog_id;
 
                 int conversationId = -1;
-                conversationId = parentsPendingLinkToSequenceId.conversationID;
+                conversationId = parentDialogueEntry.conversationID;
                 Conversation conversation = database.GetConversation(conversationId);
 
                 DialogueEntry targetEntry = null;
@@ -347,16 +330,16 @@ namespace PixelCrushers.DialogueSystem.Celtx
                 {
                     targetEntry = CreateNextDialogueEntryForConversation(conversation, sequenceName, sequenceId);
                     AddSetVariableScript(targetEntry, sequenceCatalogId);
-                } 
+                }
                 else
                 {
                     string linkConditionId = GetLinkConditionId(sourceCxId, sequenceId);
-                    if (parentsPendingLinkToSequenceId.outgoingLinks.Count > 0)
+                    if (parentDialogueEntry.outgoingLinks.Count > 0)
                     {
-                        foreach (Link link in parentsPendingLinkToSequenceId.outgoingLinks)
+                        foreach (Link link in parentDialogueEntry.outgoingLinks)
                         {
                             string linkCxId = Field.LookupValue(conversation.GetDialogueEntry(link.destinationDialogueID).fields, CeltxFields.CeltxId);
-                            string targetLinkId = Field.LookupValue(parentsPendingLinkToSequenceId.fields, CeltxFields.CeltxId) + "-" + Field.LookupValue(targetEntry.fields, CeltxFields.CeltxId);
+                            string targetLinkId = Field.LookupValue(parentDialogueEntry.fields, CeltxFields.CeltxId) + "-" + Field.LookupValue(targetEntry.fields, CeltxFields.CeltxId);
                             if (linkCxId.Contains(targetLinkId))
                             {
                                 return targetEntry;
@@ -366,44 +349,21 @@ namespace PixelCrushers.DialogueSystem.Celtx
 
                 }
 
-                LinkDialogueEntries(parentsPendingLinkToSequenceId, targetEntry, GetLinkConditionId(sourceCxId, sequenceId));
+                LinkDialogueEntries(parentDialogueEntry, targetEntry, GetLinkConditionId(sourceCxId, sequenceId));
 
                 // Process actual sequence node contents
-                if (!item.sequenceProcessingComplete)
+                if (!sequenceLinkingData.sequenceProcessingComplete)
                 {
-                    targetEntry = ProcessSequenceNodeContents(targetEntry, cxSequenceContentObject);
+                    return ProcessSequenceNodeContents(targetEntry, targetSequenceContentObject);
                 }
                 else
                 {
                     return null;
                 }
-                //HERE TODO RE_ADD ^^^^^
-
-                return targetEntry;
-
-                //if (cxSequenceContentObject.attrs.transitions != null && cxSequenceContentObject.attrs.transitions.Count == 1 && cxSequenceContentObject.attrs.transitions[0].id != null)
-                //{
-                //    AddConditionToPendingLinks(entry, sequenceId, cxSequenceContentObject.attrs.transitions[0].id, false);
-                //}
-                //else
-                //{
-                //    CxContent branchData = cxSequenceContentObject.content[0].content.Find(c => c.type.Equals("cxbranch"));
-                //    CxContent jumpData = cxSequenceContentObject.content[0].content.Find(c => c.type.Equals("cxjump"));
-                //    if (branchData != null)
-                //    {
-                //        CreateEntryFromBranchOrJump(branchData, conversation, entry, sequenceId, branchData.attrs.linked, false);
-                //    }
-                //    else if (jumpData != null)
-                //    {
-                //        List<CxLinked> links = new List<CxLinked>();
-                //        links.Add(new CxLinked(jumpData.attrs.linked_jump.id));
-                //        CreateEntryFromBranchOrJump(jumpData, conversation, entry, sequenceId, links, true);
-                //    }
-                //}
             }
             catch (System.Exception e)
             {
-                LogError(MethodBase.GetCurrentMethod(), e, cxSequenceContentObject.attrs.id);
+                LogError(MethodBase.GetCurrentMethod(), e, targetSequenceContentObject.attrs.id);
                 return null;
             }
         }
@@ -421,114 +381,6 @@ namespace PixelCrushers.DialogueSystem.Celtx
             return null;
         }
 
-        private void ProcessConversationRootNode(CxContent cxSequenceContentObject, string sequenceId)
-        {
-            try
-            {
-                string sequenceName = cxSequenceContentObject.attrs.name;
-                string sequenceCatalogId = cxSequenceContentObject.attrs.catalog_id;
-
-                List<CxContent> pageContents = GetSequencePageContents(cxSequenceContentObject);
-                if (pageContents == null)
-                {
-                    LogWarning("Skipping this sequence map because the Conversation Root node's page is null or empty. Please ensure the node has 2 characters",
-                        cxSequenceContentObject.attrs.id, cxSequenceContentObject.attrs.name);
-                    return;
-                }
-
-                List<CxContent> characters = pageContents.FindAll(c => c.type.Equals("cxcharacter"));
-
-                if (characters == null || characters.Count < 2)
-                {
-                    LogWarning("Skipping this sequence map because the Conversation Root node has less than 2 characters. Please ensure the node has 2 characters",
-                        cxSequenceContentObject.attrs.id, cxSequenceContentObject.attrs.name);
-                    return;
-                }
-
-                Conversation conversation = template.CreateConversation(template.GetNextConversationID(database), sequenceName);
-                database.conversations.Add(conversation);
-
-                conversation.ActorID = GetActorIdForCharacter(characters[0]);
-                conversation.ConversantID = GetActorIdForCharacter(characters[1]);
-
-                DialogueEntry startNode = CreateNextDialogueEntryForConversation(conversation, "START", sequenceId);
-                startNode.Sequence = "None()";
-                AddSetVariableScript(startNode, sequenceCatalogId);
-
-                if (cxSequenceContentObject.attrs.transitions != null && cxSequenceContentObject.attrs.transitions.Count == 1 && cxSequenceContentObject.attrs.transitions[0].id != null)
-                {
-                    AddConditionToPendingLinks(startNode, sequenceId, cxSequenceContentObject.attrs.transitions[0].id, false);
-                } 
-                else
-                {
-                    CxContent jumpData = cxSequenceContentObject.content[0].content.Find(c => c.type.Equals("cxjump"));
-                    if (jumpData == null)
-                    {
-                        LogWarning($"Can't resolve jump from {sequenceName} ({sequenceCatalogId})", sequenceCatalogId, sequenceName);
-                    }
-                    else
-                    { 
-                        List<CxLinked> links = new List<CxLinked>();
-                        links.Add(new CxLinked(jumpData.attrs.linked_jump.id));
-                        CreateEntryFromBranchOrJump(jumpData, conversation, startNode, sequenceId, links, true);
-                    }
-                }
-            }
-            catch (System.Exception e)
-            {
-                LogError(MethodBase.GetCurrentMethod(), e, cxSequenceContentObject.attrs.id);
-            }
-        }
-
-        private void ProcessNonRootSequenceNode(CxContent cxSequenceContentObject, string sequenceId, List<DialogueEntry> parentsPendingLinkToSequenceId)
-        {
-            try
-            {
-                string sequenceName = cxSequenceContentObject.attrs.name;
-                string sequenceCatalogId = cxSequenceContentObject.attrs.catalog_id;
-
-                int conversationId = -1;
-                conversationId = parentsPendingLinkToSequenceId[0].conversationID;
-                Conversation conversation = database.GetConversation(conversationId);
-
-                DialogueEntry entry = CreateNextDialogueEntryForConversation(conversation, sequenceName, sequenceId);
-                AddSetVariableScript(entry, sequenceCatalogId);
-                foreach (DialogueEntry parentEntry in parentsPendingLinkToSequenceId)
-                {
-                    PendingLink pendingLink = celtxData.pendingLinksForDialogueEntry[parentEntry].Find(i => i.destinationSequenceId.Equals(sequenceId));
-                    LinkDialogueEntries(parentEntry, entry, pendingLink.conditionId);
-                    celtxData.pendingLinksForDialogueEntry[parentEntry].Remove(pendingLink);
-                }
-
-                // Process actual sequence node contents
-                entry = ProcessSequenceNodeContents(entry, cxSequenceContentObject);
-
-                if (cxSequenceContentObject.attrs.transitions != null && cxSequenceContentObject.attrs.transitions.Count == 1 && cxSequenceContentObject.attrs.transitions[0].id != null)
-                {
-                    AddConditionToPendingLinks(entry, sequenceId, cxSequenceContentObject.attrs.transitions[0].id, false);
-                }
-                else
-                {
-                    CxContent branchData = cxSequenceContentObject.content[0].content.Find(c => c.type.Equals("cxbranch"));
-                    CxContent jumpData = cxSequenceContentObject.content[0].content.Find(c => c.type.Equals("cxjump"));
-                    if (branchData != null)
-                    {
-                        CreateEntryFromBranchOrJump(branchData, conversation, entry, sequenceId, branchData.attrs.linked, false);
-                    }
-                    else if (jumpData != null)
-                    {
-                        List<CxLinked> links = new List<CxLinked>();
-                        links.Add(new CxLinked(jumpData.attrs.linked_jump.id));
-                        CreateEntryFromBranchOrJump(jumpData, conversation, entry, sequenceId, links, true);
-                    }
-                }
-            }
-            catch (System.Exception e)
-            {
-                LogError(MethodBase.GetCurrentMethod(), e, cxSequenceContentObject.attrs.id);
-            }
-        }
-
         private DialogueEntry ProcessSequenceNodeContents(DialogueEntry initialEntry, CxContent cxSequenceContentObject)
         {
             DialogueEntry currentEntry = initialEntry;
@@ -543,9 +395,9 @@ namespace PixelCrushers.DialogueSystem.Celtx
 
                 foreach (CxContent pageContentItem in sequencePageContentList)
                 {
-                    if (!pageContentItem.type.Equals("cxgameplay") && 
-                        !pageContentItem.type.Equals("cxcharacter") && 
-                        !pageContentItem.type.Equals("cxparenthetical") && 
+                    if (!pageContentItem.type.Equals("cxgameplay") &&
+                        !pageContentItem.type.Equals("cxcharacter") &&
+                        !pageContentItem.type.Equals("cxparenthetical") &&
                         !pageContentItem.type.Equals("cxdialog"))
                     {
                         continue;
@@ -566,6 +418,16 @@ namespace PixelCrushers.DialogueSystem.Celtx
                             {
                                 currentEntry.Sequence = GetTextWithoutTag(combinedText);
                             }
+                            else if (StringStartsWithTag(combinedText, "[COND]"))
+                            {
+                                if (!string.IsNullOrEmpty(currentEntry.conditionsString)) currentEntry.conditionsString += ";\n";
+                                currentEntry.conditionsString += GetTextWithoutTag(combinedText);
+                            }
+                            else if (StringStartsWithTag(combinedText, "[SCRIPT]"))
+                            {
+                                if (!string.IsNullOrEmpty(currentEntry.userScript)) currentEntry.userScript += ";\n";
+                                currentEntry.userScript += GetTextWithoutTag(combinedText);
+                            }
                             break;
 
                         case "cxcharacter":
@@ -573,12 +435,12 @@ namespace PixelCrushers.DialogueSystem.Celtx
                             if (currentEntry.ActorID == conversation.ActorID)
                             {
                                 currentEntry.ConversantID = conversation.ConversantID;
-                            } 
+                            }
                             else
                             {
                                 currentEntry.ConversantID = conversation.ActorID;
                             }
-                            
+
                             break;
 
                         case "cxparenthetical":
@@ -622,51 +484,21 @@ namespace PixelCrushers.DialogueSystem.Celtx
             return newEntry;
         }
 
-        private void CreateEntryFromBranchOrJump(CxContent contentData, Conversation conversation, DialogueEntry sourceEntry, string sequenceId, List<CxLinked> links, bool isJump)
-        {
-            try
-            {
-
-                if (contentData != null)
-                {
-                    string cxId = contentData.attrs.id;
-                    string name = contentData.attrs.name;
-                    string catalogId = contentData.attrs.catalog_id;
-                    DialogueEntry newEntry = CreateNextDialogueEntryForConversation(conversation, name, cxId, true);
-                    AddSetVariableScript(newEntry, catalogId);
-                    LinkDialogueEntries(sourceEntry, newEntry, GetLinkConditionId(sequenceId, cxId));
-
-                    foreach (CxLinked link in links)
-                    {
-                        AddConditionToPendingLinks(newEntry, cxId, link.id, isJump);
-                    }
-                }
-            }
-            catch (System.Exception e)
-            {
-                LogError(MethodBase.GetCurrentMethod(), e, sequenceId);
-            }
-}
-
-        private void AddConditionToPendingLinks(DialogueEntry sourceEntry, string sourceCxId, string targetCxId, bool isJumpLink)
-        {
-            string conditionId = GetLinkConditionId(sourceCxId, targetCxId);
-            PendingLink pendingNonJumpLink = new PendingLink(targetCxId, conditionId, isJumpLink);
-            AddToPendingLinks(sourceEntry, pendingNonJumpLink);
-        }
-
         private void AddSetVariableScript(DialogueEntry entry, string sequenceCatalogId)
         {
             try
             {
                 if (celtxData.customVarListLookupByCxSequenceId.ContainsKey(sequenceCatalogId))
                 {
+                    if (!celtxData.customVarListLookupByCxSequenceId.ContainsKey(sequenceCatalogId)) Debug.LogError("Celtx Import: Can't find custom variable list for sequence ID " + sequenceCatalogId);
                     List<CxCustomVar> cxCustomVars = celtxData.customVarListLookupByCxSequenceId[sequenceCatalogId];
                     StringBuilder luaScript = new StringBuilder();
                     foreach (CxCustomVar cxCustomVar in cxCustomVars)
                     {
                         if (luaScript.Length != 0) { luaScript.Append("; "); }
+                        if (!celtxData.variableLookupByCeltxId.ContainsKey(cxCustomVar.id)) Debug.LogError("Celtx Import: Can't find variable with ID " + cxCustomVar.id);
                         Variable var = database.GetVariable(celtxData.variableLookupByCeltxId[cxCustomVar.id]);
+                        if (var == null) Debug.LogError("Celtx Import: Dialogue database doesn't contain variable named " + celtxData.variableLookupByCeltxId[cxCustomVar.id]);
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.Append("Variable");
                         stringBuilder.Append("[\"" + var.Name + "\"]");
@@ -705,29 +537,12 @@ namespace PixelCrushers.DialogueSystem.Celtx
             }
         }
 
-        private List<DialogueEntry> GetParentEntries(string sequenceId)
-        {
-            List<DialogueEntry> parentEntries = new List<DialogueEntry>();
-            foreach (DialogueEntry entry in celtxData.pendingLinksForDialogueEntry.Keys)
-            {
-                foreach (PendingLink pendingLink in celtxData.pendingLinksForDialogueEntry[entry])
-                {
-                    if (pendingLink.destinationSequenceId.Equals(sequenceId) && !pendingLink.isJumpLink)
-                    {
-                        parentEntries.Add(entry);
-                    }
-                }
-            }
-            return parentEntries;
-        }
-
-
-
         private int GetActorIdForCharacter(CxContent characterContentItem)
         {
+            if (!celtxData.actorIdLookupByCxCharacterCatalogId.ContainsKey(characterContentItem.attrs.catalog_id)) Debug.LogError("Celtx Import: Lookup failed for actor with ID " + characterContentItem.attrs.catalog_id);
             return celtxData.actorIdLookupByCxCharacterCatalogId[characterContentItem.attrs.catalog_id];
         }
-         
+
         private DialogueEntry CreateNextDialogueEntryForConversation(Conversation conversation, string title, string celtxId, bool isGroup = false)
         {
             try
@@ -750,26 +565,32 @@ namespace PixelCrushers.DialogueSystem.Celtx
             }
             return null;
         }
-#endregion
 
-#region Linking
-        private void AddToPendingLinks(DialogueEntry parentEntry, PendingLink pendingLink)
+        private void ConvertBlankNodesToGroupNodes()
         {
-            if (celtxData.pendingLinksForDialogueEntry.ContainsKey(parentEntry))
+            foreach (Conversation conversation in database.conversations)
             {
-                celtxData.pendingLinksForDialogueEntry[parentEntry].Add(pendingLink);
-            }
-            else
-            {
-                List<PendingLink> pendingNonJumpLinks = new List<PendingLink>();
-                pendingNonJumpLinks.Add(pendingLink);
-                celtxData.pendingLinksForDialogueEntry.Add(parentEntry, pendingNonJumpLinks);
+                foreach (DialogueEntry entry in conversation.dialogueEntries)
+                {
+                    var isBlankNode = string.IsNullOrEmpty(entry.DialogueText) &&
+                        string.IsNullOrEmpty(entry.MenuText) &&
+                        string.IsNullOrEmpty(entry.Sequence);
+                    if (isBlankNode)
+                    {
+                        entry.isGroup = true;
+                    }
+                }
             }
         }
 
+        #endregion
+
+        #region Linking
+
         private string GetLinkConditionId(string sourceCeltxId, string destinationCeltxId)
         {
-            try { 
+            try
+            {
                 foreach (CeltxCondition condition in celtxData.conditions)
                 {
                     foreach (CxOnObj onObj in condition.links)
@@ -803,14 +624,14 @@ namespace PixelCrushers.DialogueSystem.Celtx
                     if (condition.delay)
                     {
                         DialogueEntry delayEntry = CreateNextDialogueEntryForConversation(database.GetConversation(source.conversationID),
-                            "[D]-" + condition.name, 
+                            "[D]-" + condition.name,
                             "D-" + Field.LookupValue(source.fields, CeltxFields.CeltxId) + "-" + Field.LookupValue(destination.fields, CeltxFields.CeltxId), true);
                         source.outgoingLinks.Add(new Link(source.conversationID, source.id, delayEntry.conversationID, delayEntry.id));
                         entryToLinkToCondition = delayEntry;
                     }
 
                     DialogueEntry conditionEntry = CreateNextDialogueEntryForConversation(database.GetConversation(source.conversationID),
-                        "[COND]" + condition.name, 
+                        "[COND]" + condition.name,
                         "C-" + Field.LookupValue(source.fields, CeltxFields.CeltxId) + "-" + Field.LookupValue(destination.fields, CeltxFields.CeltxId), true);
                     conditionEntry.conditionsString = condition.luaConditionString;
                     entryToLinkToCondition.outgoingLinks.Add(new Link(entryToLinkToCondition.conversationID, entryToLinkToCondition.id, conditionEntry.conversationID, conditionEntry.id));
@@ -821,59 +642,25 @@ namespace PixelCrushers.DialogueSystem.Celtx
             {
                 LogError(MethodBase.GetCurrentMethod(), e, source.Title + "-" + destination.Title + "-" + conditionId);
             }
-}
-
-        private void ResolvePendingLinks()
-        {
-            foreach (DialogueEntry parentEntry in celtxData.pendingLinksForDialogueEntry.Keys)
-            {
-                if (parentEntry == null)
-                {
-                    continue;
-                }
-                else if (!celtxData.pendingLinksForDialogueEntry.ContainsKey(parentEntry))
-                {
-                    LogWarning($"Can't resolve link from {parentEntry} because a link from the entry wasn't added to the pending list.", parentEntry.Title, "");
-                }
-                else
-                {
-                    foreach (PendingLink pending in celtxData.pendingLinksForDialogueEntry[parentEntry])
-                    {
-                        if (pending.destinationSequenceId == null)
-                        {
-                            continue;
-                        }
-                        else if (!celtxData.dialogueEntryLookupByCeltxId.ContainsKey(pending.destinationSequenceId))
-                        {
-                            LogWarning($"Can't resolve link to sequence with Celtx Id {pending.destinationSequenceId} because the sequence wasn't added to the dialogue database.", pending.destinationSequenceId, "");
-                        }
-                        else
-                        {
-                            DialogueEntry destEntry = celtxData.dialogueEntryLookupByCeltxId[pending.destinationSequenceId];
-                            LinkDialogueEntries(parentEntry, destEntry, pending.conditionId);
-                        }
-                    }
-                }
-            }
-            
-            celtxData.pendingLinksForDialogueEntry.Clear();
         }
 
-#endregion
+        #endregion
 
-#region Text Processing
+        #region Text Processing
         private bool StringStartsWithTag(string stringToCheck, string targetTag)
         {
-            if (stringToCheck == null || targetTag == null){ return false; }
+            if (stringToCheck == null || targetTag == null) { return false; }
 
-            return stringToCheck.ToUpper().StartsWith(targetTag);
+            return stringToCheck.StartsWith(targetTag, System.StringComparison.OrdinalIgnoreCase);
         }
 
         private string GetTextWithoutTag(string text)
         {
-            if (text == null) { return ""; }
+            if (string.IsNullOrEmpty(text)) { return ""; }
 
-            return System.Text.RegularExpressions.Regex.Split(text, "(\\[.*\\])")[2].Trim();            
+            //return System.Text.RegularExpressions.Regex.Split(text, "(\\[.*\\])")[2].Trim();
+            var endTagPos = text.IndexOf(']');
+            return (endTagPos == -1) ? "" : text.Substring(endTagPos + 1);
         }
 
         private string GetCombinedText(List<CxContent> contentList)
@@ -933,9 +720,9 @@ namespace PixelCrushers.DialogueSystem.Celtx
                 return "";
             }
         }
-#endregion
+        #endregion
 
-#region Catalog Data Processing
+        #region Catalog Data Processing
 
         private void ConvertCharacterCatalogEntryToDSActor(CxAttrs catalogItemAttrs)
         {
@@ -947,13 +734,31 @@ namespace PixelCrushers.DialogueSystem.Celtx
                     int actorID = template.GetNextActorID(database);
                     actor = template.CreateActor(actorID, catalogItemAttrs.title, IsPlayerCharacter(catalogItemAttrs));
                     database.actors.Add(actor);
-
-                    celtxData.actorIdLookupByCxCharacterCatalogId.Add(catalogItemAttrs.id, actorID);
+                }
+                else
+                {
+                    var originalActor = (database.syncInfo.syncActors && database.syncInfo.syncActorsDatabase != null)
+                        ? database.syncInfo.syncActorsDatabase.GetActor(actor.Name) : null;
+                    if (originalActor != null)
+                    {
+                        AppendToField(originalActor.fields, CeltxFields.CatalogId, catalogItemAttrs.id, FieldType.Text);
+                        AppendToField(originalActor.fields, CeltxFields.Description, catalogItemAttrs.item_data.description, FieldType.Text);
+                        AppendToField(originalActor.fields, CeltxFields.Pictures, getPictureString(catalogItemAttrs), FieldType.Files);
+#if UNITY_EDITOR
+                        UnityEditor.EditorUtility.SetDirty(database.syncInfo.syncActorsDatabase);
+#endif
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Celtx Import: Actor " + catalogItemAttrs.title + " was already added with Celtx ID " + actor.LookupValue(CeltxFields.CatalogId) + " but another actor with same name has Celtx ID " + catalogItemAttrs.id);
+                    }
                 }
 
                 AppendToField(actor.fields, CeltxFields.CatalogId, catalogItemAttrs.id, FieldType.Text);
                 AppendToField(actor.fields, CeltxFields.Description, catalogItemAttrs.item_data.description, FieldType.Text);
                 AppendToField(actor.fields, CeltxFields.Pictures, getPictureString(catalogItemAttrs), FieldType.Files);
+
+                celtxData.actorIdLookupByCxCharacterCatalogId[catalogItemAttrs.id] = actor.id;
             }
             catch (System.Exception e)
             {
@@ -1035,6 +840,19 @@ namespace PixelCrushers.DialogueSystem.Celtx
                     location = template.CreateLocation(locationId, catalogItemAttrs.title);
                     database.locations.Add(location);
                 }
+                else
+                {
+                    var originalLocation = (database.syncInfo.syncLocations && database.syncInfo.syncLocationsDatabase != null)
+                        ? database.syncInfo.syncLocationsDatabase.GetLocation(location.Name) : null;
+                    if (originalLocation != null)
+                    {
+                        AppendToField(originalLocation.fields, CeltxFields.CatalogId, catalogItemAttrs.id, FieldType.Text);
+                        AppendToField(originalLocation.fields, CeltxFields.Description, catalogItemAttrs.item_data.description, FieldType.Text);
+#if UNITY_EDITOR
+                        UnityEditor.EditorUtility.SetDirty(database.syncInfo.syncLocationsDatabase);
+#endif
+                    }
+                }
 
                 AppendToField(location.fields, CeltxFields.CatalogId, catalogItemAttrs.id, FieldType.Text);
                 AppendToField(location.fields, CeltxFields.Description, catalogItemAttrs.item_data.description, FieldType.Text);
@@ -1057,10 +875,25 @@ namespace PixelCrushers.DialogueSystem.Celtx
                     item = template.CreateItem(itemId, catalogItemAttrs.title);
                     database.items.Add(item);
                 }
+                else
+                {
+                    var originalItem = (database.syncInfo.syncItems && database.syncInfo.syncItemsDatabase != null)
+                        ? database.syncInfo.syncItemsDatabase.GetItem(item.Name) : null;
+                    if (originalItem != null)
+                    {
+                        AppendToField(originalItem.fields, CeltxFields.CatalogId, catalogItemAttrs.id, FieldType.Text);
+                        AppendToField(originalItem.fields, CeltxFields.Description, catalogItemAttrs.item_data.description, FieldType.Text);
+                        AppendToField(originalItem.fields, CeltxFields.ItemType, catalogItemAttrs.item_data.item_type, FieldType.Text);
+                        AppendToField(originalItem.fields, CeltxFields.ItemProperties, catalogItemAttrs.item_data.item_properties, FieldType.Text);
+                        AppendToField(originalItem.fields, CeltxFields.ItemAvailability, catalogItemAttrs.item_data.item_availability, FieldType.Text);
+#if UNITY_EDITOR
+                        UnityEditor.EditorUtility.SetDirty(database.syncInfo.syncItemsDatabase);
+#endif
+                    }
+                }
 
                 AppendToField(item.fields, CeltxFields.CatalogId, catalogItemAttrs.id, FieldType.Text);
                 AppendToField(item.fields, CeltxFields.Description, catalogItemAttrs.item_data.description, FieldType.Text);
-
                 AppendToField(item.fields, CeltxFields.ItemType, catalogItemAttrs.item_data.item_type, FieldType.Text);
                 AppendToField(item.fields, CeltxFields.ItemProperties, catalogItemAttrs.item_data.item_properties, FieldType.Text);
                 AppendToField(item.fields, CeltxFields.ItemAvailability, catalogItemAttrs.item_data.item_availability, FieldType.Text);
@@ -1088,9 +921,9 @@ namespace PixelCrushers.DialogueSystem.Celtx
                 LogError(MethodBase.GetCurrentMethod(), e, catalogItemAttrs.id, catalogItemAttrs.title);
             }
         }
-#endregion
+        #endregion
 
-#region Variables and Conditions
+        #region Variables and Conditions
 
         private void ConvertCeltxVariableToDSVariable(CxVariable variableObject)
         {
@@ -1122,17 +955,33 @@ namespace PixelCrushers.DialogueSystem.Celtx
                         break;
 
                     case "radio":
-                        variableDefaultValue = variableObject.config.options[(int) variableObject.config.defaultNum].strVal;
+                        variableDefaultValue = variableObject.config.options[(int)variableObject.config.defaultNum].strVal;
                         fieldType = FieldType.Text;
                         break;
                 }
 
-                int variableId = template.GetNextVariableID(database);
-                Variable variable = template.CreateVariable(variableId, variableObject.name, variableDefaultValue, fieldType);
-                database.variables.Add(variable);
+                var variable = database.GetVariable(variableObject.name);
+                if (variable == null)
+                {
+                    int variableId = template.GetNextVariableID(database);
+                    variable = template.CreateVariable(variableId, variableObject.name, variableDefaultValue, fieldType);
+                    database.variables.Add(variable);
+                }
+                else
+                {
+                    var originalVariable = (database.syncInfo.syncVariables && database.syncInfo.syncVariablesDatabase != null)
+                        ? database.syncInfo.syncVariablesDatabase.GetVariable(variableObject.name) : null;
+                    if (originalVariable != null)
+                    {
+                        AppendToField(originalVariable.fields, CeltxFields.Description, variableObject.desc, FieldType.Text);
+#if UNITY_EDITOR
+                        UnityEditor.EditorUtility.SetDirty(database.syncInfo.syncVariablesDatabase);
+#endif
+                    }
+                }
 
                 AppendToField(variable.fields, CeltxFields.Description, variableObject.desc, FieldType.Text);
-                celtxData.variableLookupByCeltxId.Add(variableObject.id, variableObject.name);
+                celtxData.variableLookupByCeltxId[variableObject.id] = variableObject.name;
             }
             catch (System.Exception e)
             {
@@ -1142,7 +991,8 @@ namespace PixelCrushers.DialogueSystem.Celtx
 
         private void ExtractCeltxCondition(CxAttrs conditionItemAttrs)
         {
-            try { 
+            try
+            {
                 CeltxCondition condition = new CeltxCondition();
                 condition.id = conditionItemAttrs.id;
                 condition.catalogId = conditionItemAttrs.catalog_id;
@@ -1184,7 +1034,7 @@ namespace PixelCrushers.DialogueSystem.Celtx
             {
                 LogError(MethodBase.GetCurrentMethod(), e, condition.id, condition.name);
             }
-}
+        }
 
         private void GenerateLuaCondition(CeltxCondition condition)
         {
@@ -1193,7 +1043,7 @@ namespace PixelCrushers.DialogueSystem.Celtx
                 if (condition.literals == null)
                 {
                     LogMessage(LogLevel.W,
-                            "Condition has no literals(literals list is null). Lua script generation will be skipped for this condition. Please add literals to the condition in CeltX", condition.id);
+                            "Condition has no literals(literals list is null). Lua script generation will be skipped for this condition. Please add literals to the condition in Celtx", condition.id);
                     return;
                 }
 
@@ -1221,7 +1071,7 @@ namespace PixelCrushers.DialogueSystem.Celtx
                         if (SurroundComparisonValueInQuotes(literal))
                         {
                             conditionString.Append("\"" + comparisonVal + "\"");
-                        } 
+                        }
                         else
                         {
                             conditionString.Append(comparisonVal);
@@ -1260,14 +1110,17 @@ namespace PixelCrushers.DialogueSystem.Celtx
 
         private bool SurroundComparisonValueInQuotes(CxLiteral literal)
         {
-            try { 
+            try
+            {
                 string variableId = literal.id;
+                if (!celtxData.variableLookupByCeltxId.ContainsKey(variableId)) Debug.LogError("Celtx Import: Can't find variable with ID " + variableId);
                 Variable var = database.GetVariable(celtxData.variableLookupByCeltxId[variableId]);
+                if (var == null) Debug.LogError("Celtx Import: Dialogue database doesn't contain variable named " + celtxData.variableLookupByCeltxId[variableId]);
                 FieldType varType = var.Type;
                 if (varType == FieldType.Text)
                 {
                     return true;
-                } 
+                }
                 else
                 {
                     return false;
@@ -1296,7 +1149,7 @@ namespace PixelCrushers.DialogueSystem.Celtx
             {
                 LogError(MethodBase.GetCurrentMethod(), e, conditionId);
             }
-            return null;            
+            return null;
         }
 
         private string GetLuaComparisonOperator(string literalOp)
@@ -1332,9 +1185,9 @@ namespace PixelCrushers.DialogueSystem.Celtx
             }
         }
 
-#endregion
+        #endregion
 
-#region Check Sequence Syntax
+        #region Check Sequence Syntax
 
         /// <summary>
         /// Check syntax of all sequences in all dialogue entries in database.
@@ -1355,7 +1208,7 @@ namespace PixelCrushers.DialogueSystem.Celtx
                     {
                         var text = entry.Title;
                         if (string.IsNullOrEmpty(text)) text = entry.subtitleText;
-                        LogWarning("Dialogue entry " + conversation.id + ":" + entry.id + 
+                        LogWarning("Dialogue entry " + conversation.id + ":" + entry.id +
                             " in conversation '" + conversation.Title + "' has syntax error in [SEQ] Sequence: " + sequence,
                             Field.LookupValue(entry.fields, "Celtx ID"), entry.Title);
                     }
@@ -1363,9 +1216,9 @@ namespace PixelCrushers.DialogueSystem.Celtx
             }
         }
 
-#endregion
+        #endregion
 
-#region Logging
+        #region Logging
 
         private string GetNullDataString(string nullFieldName)
         {
@@ -1391,12 +1244,12 @@ namespace PixelCrushers.DialogueSystem.Celtx
         private void LogMessage(LogLevel logLevel, string messageCore, string celtxId = null, string name = null)
         {
             StringBuilder logMessage = new StringBuilder();
-            if (celtxId != null) { logMessage.Append("CeltX Object : " + celtxId + "(" + name + ")"); }
+            if (celtxId != null) { logMessage.Append("Celtx Object : " + celtxId + "(" + name + ")"); }
             logMessage.Append(" | " + messageCore);
             if (logLevel == LogLevel.W)
             {
                 Debug.LogWarning(logMessage.ToString());
-            } 
+            }
             else if (logLevel == LogLevel.E)
             {
                 Debug.LogError(logMessage.ToString());
@@ -1407,12 +1260,12 @@ namespace PixelCrushers.DialogueSystem.Celtx
             }
         }
 
-        enum  LogLevel
+        enum LogLevel
         {
             W, E, I
         }
 
-#endregion
+        #endregion
     }
 }
 #endif

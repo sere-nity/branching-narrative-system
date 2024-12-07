@@ -55,15 +55,54 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         private static Dictionary<string, float> relationshipTable = new Dictionary<string, float>();
 
+        private static bool isRegistering = false;
+        private static bool hasCachedParticipants = false;
+        private static string cachedActorName;
+        private static string cachedConversantName;
+        private static string cachedActorIndex;
+        private static string cachedConversantIndex;
+
+#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void InitStaticVariables()
+        {
+            isRegistering = false;
+            hasCachedParticipants = false;
+            includeSimStatus = true;
+            statusTable = new Dictionary<string, string>();
+            relationshipTable = new Dictionary<string, float>();
+            if (DialogueManager.instance != null) DialogueManager.instance.StartCoroutine(RegisterLuaFunctionsAfterFrame());
+            else RegisterLuaFunctions();
+        }
+#endif
+
         /// <summary>
         /// Initializes the DialogueLua class. Registers the Chat Mapper functions (xxxStatus() and 
         /// xxxRelationship()), and initializes the Chat Mapper tables.
         /// </summary>
         static DialogueLua()
         {
+            InitializeChatMapperVariables();
+            RegisterLuaFunctions();
+        }
+
+        public static void RegisterLuaFunctions()
+        {
             RegisterChatMapperFunctions();
             RegisterDialogueSystemFunctions();
-            InitializeChatMapperVariables();
+        }
+
+        static System.Collections.IEnumerator RegisterLuaFunctionsAfterFrame()
+        {
+            isRegistering = true;
+            yield return CoroutineUtility.endOfFrame;
+            RegisterLuaFunctions();
+            isRegistering = false;
+            if (hasCachedParticipants)
+            {
+                hasCachedParticipants = false;
+                SetParticipants(cachedActorName, cachedConversantName, cachedActorIndex, cachedConversantIndex);
+            }
         }
 
         /// <summary>
@@ -135,6 +174,14 @@ namespace PixelCrushers.DialogueSystem
             SetVariable("Conversant", conversantName);
             SetVariable("ActorIndex", StringToTableIndex(string.IsNullOrEmpty(actorIndex) ? actorName : actorIndex));
             SetVariable("ConversantIndex", StringToTableIndex(string.IsNullOrEmpty(conversantIndex) ? actorName : conversantIndex));
+            if (isRegistering) // Cache participants to set after Lua funcs are registered.
+            {
+                hasCachedParticipants = true;
+                cachedActorName = actorName;
+                cachedConversantName = conversantName;
+                cachedActorIndex = actorIndex;
+                cachedConversantIndex = conversantIndex;
+            }
         }
 
         /// <summary>
@@ -311,7 +358,7 @@ namespace PixelCrushers.DialogueSystem
             {
                 if (!string.IsNullOrEmpty(field.title))
                 {
-                    sb.AppendFormat("{0} = {1}, ", new System.Object[] { StringToTableIndex(field.title), FieldValueAsString(field) });
+                    sb.AppendFormat("{0} = {1}, ", new System.Object[] { StringToFieldName(field.title), FieldValueAsString(field) });
                 }
             }
             if (!string.IsNullOrEmpty(extraField)) sb.Append(extraField);
@@ -858,6 +905,20 @@ namespace PixelCrushers.DialogueSystem
         }
 
         /// <summary>
+        /// Returns a list of all runtime variable names.
+        /// </summary>
+        public static string[] GetAllVariables()
+        {
+            var list = new List<string>();
+            var variableTable = Lua.Run("return Variable").asTable;
+            if (variableTable != null)
+            {
+                list.AddRange(variableTable.keys);
+            }
+            return list.ToArray();
+        }
+
+        /// <summary>
         /// Checks if a variable exists in the Lua Variable table.
         /// </summary>
         /// <returns><c>true</c> if the variable exists, <c>false</c> otherwise.</returns>
@@ -877,6 +938,42 @@ namespace PixelCrushers.DialogueSystem
         {
             if (string.IsNullOrEmpty(variable)) return Lua.NoResult;
             return SafeGetLuaResult(string.Format("return Variable[\"{0}\"]", new System.Object[] { StringToTableIndex(variable) }));
+        }
+
+        /// <summary>
+        /// Gets the bool value of a Lua variable, or returns a default value if not defined.
+        /// </summary>
+        public static bool GetVariable(string variable, bool defaultValue)
+        {
+            var result = GetVariable(variable);
+            return result.isBool ? result.asBool : defaultValue;
+        }
+
+        /// <summary>
+        /// Gets the string value of a Lua variable, or returns a default value if not defined.
+        /// </summary>
+        public static string GetVariable(string variable, string defaultValue)
+        {
+            var result = GetVariable(variable);
+            return result.isString ? result.asString: defaultValue;
+        }
+
+        /// <summary>
+        /// Gets the int value of a Lua variable, or returns a default value if not defined.
+        /// </summary>
+        public static int GetVariable(string variable, int defaultValue)
+        {
+            var result = GetVariable(variable);
+            return result.isNumber ? result.asInt : defaultValue;
+        }
+
+        /// <summary>
+        /// Gets the float value of a Lua variable, or returns a default value if not defined.
+        /// </summary>
+        public static float GetVariable(string variable, float defaultValue)
+        {
+            var result = GetVariable(variable);
+            return result.isNumber ? result.asFloat : defaultValue;
         }
 
         /// <summary>
@@ -914,6 +1011,30 @@ namespace PixelCrushers.DialogueSystem
             else
             {
                 return StringToTableIndex(s + "_" + Localization.Language);
+            }
+        }
+
+        /// <summary>
+        /// Returns the version of a string usable as the field of an element in a Chat Mapper table.
+        /// </summary>
+        public static string StringToFieldName(string s)
+        {
+            return StringToTableIndex(s).Replace('.', '_');
+        }
+
+        /// <summary>
+        /// Returns a StringToFieldName() value after adding the current language code
+        /// to the end of s.
+        /// </summary>
+        public static string StringToLocalizedFieldName(string s)
+        {
+            if (Localization.IsDefaultLanguage || string.IsNullOrEmpty(s))
+            {
+                return StringToFieldName(s);
+            }
+            else
+            {
+                return StringToFieldName(s + "_" + Localization.Language);
             }
         }
 
@@ -1049,6 +1170,20 @@ namespace PixelCrushers.DialogueSystem
         public static Lua.Result GetConversationField(int conversationID, string field)
         {
             return Lua.Run(string.Format("return Conversation[{0}].{1}", new System.Object[] { conversationID, StringToTableIndex(field) }), false, true);
+        }
+
+        /// <summary>
+        /// Sets the value of a conversation field.
+        /// </summary>
+        /// <param name="conversationID">Conversation ID.</param>
+        /// <param name="field">Field name.</param>
+        /// <param name="value">Value to set.</param>
+        public static void SetConversationField(int conversationID, string field, object value)
+        {
+            var safeValue = (value == null) ? "nil"
+                : (value.GetType() == typeof(string)) ? $"\"{DoubleQuotesToSingle(value.ToString())}\""
+                : value.ToString();
+            Lua.Run(string.Format("return Conversation[{0}].{1} = {2}", new System.Object[] { conversationID, StringToTableIndex(field), safeValue }), false, true);
         }
 
         /// <summary>

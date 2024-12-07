@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 935899b62f48ae5498594680ed17d133, type: 3}
   m_Name: Camellia
   m_EditorClassIdentifier: 
-  version: 06/11/2024 18:12:39
+  version: 07/12/2024 11:25:04
   author: articy:draft 3.2.5
   description: 
   globalUserScript: 
@@ -391,6 +391,52 @@ MonoBehaviour:
     spritePortrait: {fileID: 0}
     alternatePortraits: []
     spritePortraits: []
+  - id: 9
+    fields:
+    - title: Name
+      value: Untitled entity
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Pictures
+      value: '[]'
+      type: 3
+      typeString: CustomFieldType_Files
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: IsPlayer
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Articy Id
+      value: 0x0100000000000F9A
+      type: 0
+      typeString: 
+    - title: Technical Name
+      value: Ntt_F0C0C42C
+      type: 0
+      typeString: 
+    - title: IsNPC
+      value: True
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: LongDescription
+      value: 
+      type: 0
+      typeString: 
+    - title: ShortDescription
+      value: 
+      type: 0
+      typeString: 
+    - title: Colour
+      value: 
+      type: 1
+      typeString: CustomFieldType_Number
+    portrait: {fileID: 0}
+    spritePortrait: {fileID: 0}
+    alternatePortraits: []
+    spritePortraits: []
   items: []
   locations: []
   variables:
@@ -478,11 +524,151 @@ MonoBehaviour:
       value: 
       type: 0
       typeString: CustomFieldType_Text
+  - id: 7
+    fields:
+    - title: Name
+      value: candle_crafting.melt_tallow_success
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Initial Value
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+  - id: 8
+    fields:
+    - title: Name
+      value: candle_crafting.melt_tallow_partial
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Initial Value
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+  - id: 9
+    fields:
+    - title: Name
+      value: candle_crafting.melt_tallow_failure
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Initial Value
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+  - id: 10
+    fields:
+    - title: Name
+      value: candle_crafting.spoken_to_NPCA
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Initial Value
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+  - id: 11
+    fields:
+    - title: Name
+      value: candle_crafting.read_alchemy_book
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Initial Value
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+  - id: 12
+    fields:
+    - title: Name
+      value: candle_crafting.attempt_melt_tallow
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Initial Value
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+  - id: 13
+    fields:
+    - title: Name
+      value: inventory.tallow
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Initial Value
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+  - id: 14
+    fields:
+    - title: Name
+      value: inventory.suet
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Initial Value
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+  - id: 15
+    fields:
+    - title: Name
+      value: inventory.pot
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Initial Value
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
+  - id: 16
+    fields:
+    - title: Name
+      value: inventory.pot_lid
+      type: 0
+      typeString: CustomFieldType_Text
+    - title: Initial Value
+      value: False
+      type: 2
+      typeString: CustomFieldType_Boolean
+    - title: Description
+      value: 
+      type: 0
+      typeString: CustomFieldType_Text
   conversations:
   - id: 1
     fields:
     - title: Title
-      value: Open Fireplace With Pot
+      value: Fireplace Crafting Segment V1
       type: 0
       typeString: CustomFieldType_Text
     - title: Description
@@ -498,7 +684,7 @@ MonoBehaviour:
       type: 5
       typeString: CustomFieldType_Actor
     - title: Articy Id
-      value: 0x0100000000000237
+      value: 0x0100000000000550
       type: 0
       typeString: 
     overrideSettings:
@@ -558,7 +744,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000237
+        value: 0x0100000000000550
         type: 0
         typeString: 
       conversationID: 1
@@ -582,7 +768,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 570
+        x: 300
         y: 20
         width: 160
         height: 30
@@ -617,11 +803,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000028E
+        value: 0x010000000000065E
         type: 0
         typeString: 
       - title: InputId
-        value: 0x010000000000028E
+        value: 0x010000000000065E
         type: 0
         typeString: 
       conversationID: 1
@@ -645,7 +831,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 570
+        x: 300
         y: 70
         width: 160
         height: 30
@@ -680,11 +866,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000028F
+        value: 0x010000000000065F
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x010000000000028F
+        value: 0x010000000000065F
         type: 0
         typeString: 
       conversationID: 1
@@ -702,7 +888,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 457.5
+        x: 210
         y: 820
         width: 160
         height: 30
@@ -738,15 +924,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000239
+        value: 0x0100000000000551
         type: 0
         typeString: 
       - title: InputId
-        value: 0x010000000000023B
+        value: 0x0100000000000552
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x010000000000023C
+        value: 0x0100000000000553
         type: 0
         typeString: 
       conversationID: 1
@@ -760,7 +946,7 @@ MonoBehaviour:
       - originConversationID: 1
         originDialogueID: 3
         destinationConversationID: 1
-        destinationDialogueID: 22
+        destinationDialogueID: 19
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -770,7 +956,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 345
+        x: 120
         y: 870
         width: 160
         height: 30
@@ -805,15 +991,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000240
+        value: 0x0100000000000558
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000242
+        value: 0x0100000000000559
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000243
+        value: 0x010000000000055A
         type: 0
         typeString: 
       conversationID: 1
@@ -827,7 +1013,7 @@ MonoBehaviour:
       - originConversationID: 1
         originDialogueID: 4
         destinationConversationID: 1
-        destinationDialogueID: 24
+        destinationDialogueID: 21
         isConnector: 0
         priority: 2
       conditionsString: Variable["fireplace.pot_on_fireplace"]
@@ -837,14 +1023,14 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 570
+        x: 300
         y: 370
         width: 160
         height: 30
     - id: 5
       fields:
       - title: Title
-        value: 'YOU: "Place the suet in the pot."'
+        value: 'YOU: "PURIFY THE SUET"'
         type: 0
         typeString: 
       - title: Description
@@ -864,7 +1050,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: Place the suet in the pot.
+        value: PURIFY THE SUET
         type: 0
         typeString: 
       - title: Sequence
@@ -872,15 +1058,199 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000247
+        value: 0x010000000000055F
+        type: 0
+        typeString: 
+      - title: ingredient1
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient2
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient3
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient4
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient5
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient6
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient7
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient8
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient9
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient10
+        value: 
+        type: 0
+        typeString: 
+      - title: variable1
+        value: 
+        type: 0
+        typeString: 
+      - title: variable2
+        value: 
+        type: 0
+        typeString: 
+      - title: variable3
+        value: 
+        type: 0
+        typeString: 
+      - title: variable4
+        value: 
+        type: 0
+        typeString: 
+      - title: variable5
+        value: 
+        type: 0
+        typeString: 
+      - title: variable6
+        value: 
+        type: 0
+        typeString: 
+      - title: variable7
+        value: 
+        type: 0
+        typeString: 
+      - title: variable8
+        value: 
+        type: 0
+        typeString: 
+      - title: variable9
+        value: 
+        type: 0
+        typeString: 
+      - title: variable10
+        value: 
+        type: 0
+        typeString: 
+      - title: modifier1
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier2
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier3
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier4
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier5
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier6
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier7
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier8
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier9
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier10
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: tooltip1
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip2
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip3
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip4
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip5
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip6
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip7
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip8
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip9
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip10
+        value: 
+        type: 0
+        typeString: 
+      - title: successVariable
+        value: 
+        type: 0
+        typeString: 
+      - title: partialVariable
+        value: 
+        type: 0
+        typeString: 
+      - title: failureVariable
+        value: 
+        type: 0
+        typeString: 
+      - title: criticalVariable
+        value: 
+        type: 0
+        typeString: 
+      - title: DifficultyCrafting
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: FlagName
+        value: 
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000249
+        value: 0x0100000000000560
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x010000000000024A
+        value: 0x0100000000000561
         type: 0
         typeString: 
       conversationID: 1
@@ -894,24 +1264,24 @@ MonoBehaviour:
       - originConversationID: 1
         originDialogueID: 5
         destinationConversationID: 1
-        destinationDialogueID: 38
+        destinationDialogueID: 35
         isConnector: 0
         priority: 2
       conditionsString: Variable["fireplace.player_has_suet"]
-      userScript: 
+      userScript: Variable["inventory.suet"] = false
       onExecute:
         m_PersistentCalls:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 210
+        x: 30
         y: 470
         width: 160
         height: 30
     - id: 6
       fields:
       - title: Title
-        value: 'YOU: "Place the tallow in the pot."'
+        value: 'YOU: "MELT THE TALLOW"'
         type: 0
         typeString: 
       - title: Description
@@ -931,7 +1301,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: Place the tallow in the pot.
+        value: MELT THE TALLOW
         type: 0
         typeString: 
       - title: Sequence
@@ -939,15 +1309,199 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000024E
+        value: 0x0100000000000565
+        type: 0
+        typeString: 
+      - title: ingredient1
+        value: inventory.tallow
+        type: 0
+        typeString: 
+      - title: ingredient2
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient3
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient4
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient5
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient6
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient7
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient8
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient9
+        value: 
+        type: 0
+        typeString: 
+      - title: ingredient10
+        value: 
+        type: 0
+        typeString: 
+      - title: variable1
+        value: 'candle_crafting.spoken_to_NPCA '
+        type: 0
+        typeString: 
+      - title: variable2
+        value: 'candle_crafting.read_alchemy_book '
+        type: 0
+        typeString: 
+      - title: variable3
+        value: 
+        type: 0
+        typeString: 
+      - title: variable4
+        value: 
+        type: 0
+        typeString: 
+      - title: variable5
+        value: 
+        type: 0
+        typeString: 
+      - title: variable6
+        value: 
+        type: 0
+        typeString: 
+      - title: variable7
+        value: 
+        type: 0
+        typeString: 
+      - title: variable8
+        value: 
+        type: 0
+        typeString: 
+      - title: variable9
+        value: 
+        type: 0
+        typeString: 
+      - title: variable10
+        value: 
+        type: 0
+        typeString: 
+      - title: modifier1
+        value: 2
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier2
+        value: 5
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier3
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier4
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier5
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier6
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier7
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier8
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier9
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: modifier10
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: tooltip1
+        value: NPCA has given you advice
+        type: 0
+        typeString: 
+      - title: tooltip2
+        value: You have gained knowledge from the alchemy book
+        type: 0
+        typeString: 
+      - title: tooltip3
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip4
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip5
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip6
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip7
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip8
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip9
+        value: 
+        type: 0
+        typeString: 
+      - title: tooltip10
+        value: 
+        type: 0
+        typeString: 
+      - title: successVariable
+        value: candle_crafting.melt_tallow_success
+        type: 0
+        typeString: 
+      - title: partialVariable
+        value: candle_crafting.melt_tallow_partial
+        type: 0
+        typeString: 
+      - title: failureVariable
+        value: candle_crafting.melt_tallow_failure
+        type: 0
+        typeString: 
+      - title: criticalVariable
+        value: 
+        type: 0
+        typeString: 
+      - title: DifficultyCrafting
+        value: 
+        type: 1
+        typeString: CustomFieldType_Number
+      - title: FlagName
+        value: candle_crafting.attempt_melt_tallow
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000250
+        value: 0x0100000000000566
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000251
+        value: 0x0100000000000567
         type: 0
         typeString: 
       conversationID: 1
@@ -964,14 +1518,14 @@ MonoBehaviour:
         destinationDialogueID: 7
         isConnector: 0
         priority: 2
-      conditionsString: Variable["fireplace.player_has_tallow"]
-      userScript: 
+      conditionsString: Variable["inventory.tallow"]
+      userScript: Variable["inventory.tallow"] = false
       onExecute:
         m_PersistentCalls:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 390
+        x: 210
         y: 470
         width: 160
         height: 30
@@ -1007,15 +1561,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000255
+        value: 0x010000000000056B
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000257
+        value: 0x010000000000056C
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000258
+        value: 0x010000000000056D
         type: 0
         typeString: 
       conversationID: 1
@@ -1039,7 +1593,7 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 457.5
+        x: 300
         y: 520
         width: 160
         height: 30
@@ -1074,15 +1628,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000263
+        value: 0x0100000000000572
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000265
+        value: 0x0100000000000573
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000266
+        value: 0x0100000000000574
         type: 0
         typeString: 
       conversationID: 1
@@ -1102,13 +1656,13 @@ MonoBehaviour:
       - originConversationID: 1
         originDialogueID: 8
         destinationConversationID: 1
-        destinationDialogueID: 13
+        destinationDialogueID: 12
         isConnector: 0
         priority: 2
       - originConversationID: 1
         originDialogueID: 8
         destinationConversationID: 1
-        destinationDialogueID: 32
+        destinationDialogueID: 29
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -1118,14 +1672,14 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 345
+        x: 300
         y: 570
         width: 160
         height: 30
     - id: 9
       fields:
       - title: Title
-        value: 'YOU: "Douse the flames with water (bucket..."'
+        value: 'FIREPLACE: "You desperately attempt to control..."'
         type: 0
         typeString: 
       - title: Description
@@ -1133,11 +1687,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Actor
-        value: 1
+        value: 2
         type: 5
         typeString: CustomFieldType_Actor
       - title: Conversant
-        value: 2
+        value: 1
         type: 5
         typeString: CustomFieldType_Actor
       - title: Menu Text
@@ -1145,7 +1699,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: <i>Douse the flames with water (bucket of water in inventory) </i>
+        value: You desperately attempt to control the fire by dousing it with water.
         type: 0
         typeString: 
       - title: Sequence
@@ -1153,15 +1707,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000026A
+        value: 0x0100000000000578
         type: 0
         typeString: 
       - title: InputId
-        value: 0x010000000000026C
+        value: 0x0100000000000579
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x010000000000026D
+        value: 0x010000000000057A
         type: 0
         typeString: 
       conversationID: 1
@@ -1178,21 +1732,21 @@ MonoBehaviour:
         destinationDialogueID: 10
         isConnector: 0
         priority: 2
-      conditionsString: 
+      conditionsString: Variable["candle_crafting.melt_tallow_partial"]
       userScript: 
       onExecute:
         m_PersistentCalls:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 232.5
+        x: 60
         y: 620
         width: 160
         height: 30
     - id: 10
       fields:
       - title: Title
-        value: 'FIREPLACE: "Flames fizzle out. You didn''t think..."'
+        value: 'FIREPLACE: "The flames fizzle out. You didn''t t..."'
         type: 0
         typeString: 
       - title: Description
@@ -1212,7 +1766,8 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: <i>Flames fizzle out. You didn't think they were THAT weak. </i>
+        value: <i>The flames fizzle out. </i><i>You didn't think they were THAT weak.
+          </i>
         type: 0
         typeString: 
       - title: Sequence
@@ -1220,15 +1775,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000271
+        value: 0x010000000000057F
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000273
+        value: 0x0100000000000580
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000274
+        value: 0x0100000000000581
         type: 0
         typeString: 
       conversationID: 1
@@ -1242,7 +1797,7 @@ MonoBehaviour:
       - originConversationID: 1
         originDialogueID: 10
         destinationConversationID: 1
-        destinationDialogueID: 18
+        destinationDialogueID: 15
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -1252,78 +1807,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 270
+        x: 60
         y: 670
         width: 160
         height: 30
     - id: 11
-      fields:
-      - title: Title
-        value: 'YOU: "Pour water into the pot."'
-        type: 0
-        typeString: 
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-      - title: Actor
-        value: 1
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Conversant
-        value: 2
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Menu Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Dialogue Text
-        value: Pour water into the pot.
-        type: 0
-        typeString: 
-      - title: Sequence
-        value: 
-        type: 0
-        typeString: 
-      - title: Articy Id
-        value: 0x0100000000000278
-        type: 0
-        typeString: 
-      - title: InputId
-        value: 0x010000000000027A
-        type: 0
-        typeString: 
-      - title: OutputId
-        value: 0x010000000000027B
-        type: 0
-        typeString: 
-      conversationID: 1
-      isRoot: 0
-      isGroup: 0
-      nodeColor: 
-      delaySimStatus: 0
-      falseConditionAction: 
-      conditionPriority: 2
-      outgoingLinks:
-      - originConversationID: 1
-        originDialogueID: 11
-        destinationConversationID: 1
-        destinationDialogueID: 14
-        isConnector: 0
-        priority: 2
-      conditionsString: Variable["fireplace.player_has_water"]
-      userScript: 
-      onExecute:
-        m_PersistentCalls:
-          m_Calls: []
-      canvasRect:
-        serializedVersion: 2
-        x: 570
-        y: 470
-        width: 160
-        height: 30
-    - id: 12
       fields:
       - title: Title
         value: Fireplace Pot Lid Off
@@ -1354,15 +1842,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000029E
+        value: 0x010000000000058C
         type: 0
         typeString: 
       - title: InputId
-        value: 0x01000000000002A0
+        value: 0x010000000000058D
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x01000000000002A1
+        value: 0x010000000000058E
         type: 0
         typeString: 
       conversationID: 1
@@ -1374,27 +1862,21 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 12
+        originDialogueID: 11
         destinationConversationID: 1
         destinationDialogueID: 5
         isConnector: 0
         priority: 2
       - originConversationID: 1
-        originDialogueID: 12
+        originDialogueID: 11
         destinationConversationID: 1
         destinationDialogueID: 6
         isConnector: 0
         priority: 2
       - originConversationID: 1
-        originDialogueID: 12
+        originDialogueID: 11
         destinationConversationID: 1
-        destinationDialogueID: 11
-        isConnector: 0
-        priority: 2
-      - originConversationID: 1
-        originDialogueID: 12
-        destinationConversationID: 1
-        destinationDialogueID: 44
+        destinationDialogueID: 39
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -1404,14 +1886,82 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 270
+        x: 60
         y: 420
+        width: 160
+        height: 30
+    - id: 12
+      fields:
+      - title: Title
+        value: 'FIREPLACE: "You stare helplessly at the smoulde..."'
+        type: 0
+        typeString: 
+      - title: Description
+        value: 
+        type: 0
+        typeString: 
+      - title: Actor
+        value: 2
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Conversant
+        value: 1
+        type: 5
+        typeString: CustomFieldType_Actor
+      - title: Menu Text
+        value: 
+        type: 0
+        typeString: 
+      - title: Dialogue Text
+        value: <i>You stare helplessly at the smouldering blackness enveloping your
+          precious tallow. You can do nothing but watch. </i>
+        type: 0
+        typeString: 
+      - title: Sequence
+        value: 
+        type: 0
+        typeString: 
+      - title: Articy Id
+        value: 0x0100000000000594
+        type: 0
+        typeString: 
+      - title: InputId
+        value: 0x0100000000000595
+        type: 0
+        typeString: 
+      - title: OutputId
+        value: 0x0100000000000596
+        type: 0
+        typeString: 
+      conversationID: 1
+      isRoot: 0
+      isGroup: 0
+      nodeColor: 
+      delaySimStatus: 0
+      falseConditionAction: 
+      conditionPriority: 2
+      outgoingLinks:
+      - originConversationID: 1
+        originDialogueID: 12
+        destinationConversationID: 1
+        destinationDialogueID: 13
+        isConnector: 0
+        priority: 2
+      conditionsString: Variable["candle_crafting.melt_tallow_failure"]
+      userScript: 
+      onExecute:
+        m_PersistentCalls:
+          m_Calls: []
+      canvasRect:
+        serializedVersion: 2
+        x: 300
+        y: 620
         width: 160
         height: 30
     - id: 13
       fields:
       - title: Title
-        value: 'YOU: "Fan the flames with the flame thing..."'
+        value: 'YOU: "Take out the burnt tallow."'
         type: 0
         typeString: 
       - title: Description
@@ -1431,7 +1981,7 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: <i>Fan the flames with the flame thing. </i>
+        value: Take out the burnt tallow.
         type: 0
         typeString: 
       - title: Sequence
@@ -1439,15 +1989,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x01000000000002A7
+        value: 0x01000000000005AB
         type: 0
         typeString: 
       - title: InputId
-        value: 0x01000000000002AA
+        value: 0x01000000000005AC
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x01000000000002AB
+        value: 0x01000000000005AD
         type: 0
         typeString: 
       conversationID: 1
@@ -1461,210 +2011,7 @@ MonoBehaviour:
       - originConversationID: 1
         originDialogueID: 13
         destinationConversationID: 1
-        destinationDialogueID: 15
-        isConnector: 0
-        priority: 2
-      conditionsString: 
-      userScript: 
-      onExecute:
-        m_PersistentCalls:
-          m_Calls: []
-      canvasRect:
-        serializedVersion: 2
-        x: 457.5
-        y: 620
-        width: 160
-        height: 30
-    - id: 14
-      fields:
-      - title: Title
-        value: 'NARRATOR : "Hmmm."'
-        type: 0
-        typeString: 
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-      - title: Actor
-        value: 1
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Conversant
-        value: 2
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Menu Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Dialogue Text
-        value: Hmmm.
-        type: 0
-        typeString: 
-      - title: Sequence
-        value: 
-        type: 0
-        typeString: 
-      - title: Articy Id
-        value: 0x01000000000002AF
-        type: 0
-        typeString: 
-      - title: InputId
-        value: 0x01000000000002B2
-        type: 0
-        typeString: 
-      - title: OutputId
-        value: 0x01000000000002B3
-        type: 0
-        typeString: 
-      conversationID: 1
-      isRoot: 0
-      isGroup: 0
-      nodeColor: 
-      delaySimStatus: 0
-      falseConditionAction: 
-      conditionPriority: 2
-      outgoingLinks:
-      - originConversationID: 1
-        originDialogueID: 14
-        destinationConversationID: 1
-        destinationDialogueID: 41
-        isConnector: 0
-        priority: 2
-      conditionsString: 
-      userScript: 
-      onExecute:
-        m_PersistentCalls:
-          m_Calls: []
-      canvasRect:
-        serializedVersion: 2
-        x: 682.5
-        y: 520
-        width: 160
-        height: 30
-    - id: 15
-      fields:
-      - title: Title
-        value: 'FIREPLACE: "The flames don''t seem to be muffled..."'
-        type: 0
-        typeString: 
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-      - title: Actor
-        value: 2
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Conversant
-        value: 1
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Menu Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Dialogue Text
-        value: The flames don't seem to be muffled anymore. <i>A battle between the
-          flame and the pot</i>. You have granted the flames vengeance but at the
-          cost of your poor tallow. It is now an unrecognisable black goop.
-        type: 0
-        typeString: 
-      - title: Sequence
-        value: 
-        type: 0
-        typeString: 
-      - title: Articy Id
-        value: 0x01000000000002C5
-        type: 0
-        typeString: 
-      - title: InputId
-        value: 0x01000000000002C8
-        type: 0
-        typeString: 
-      - title: OutputId
-        value: 0x01000000000002C9
-        type: 0
-        typeString: 
-      conversationID: 1
-      isRoot: 0
-      isGroup: 0
-      nodeColor: 
-      delaySimStatus: 0
-      falseConditionAction: 
-      conditionPriority: 2
-      outgoingLinks:
-      - originConversationID: 1
-        originDialogueID: 15
-        destinationConversationID: 1
-        destinationDialogueID: 16
-        isConnector: 0
-        priority: 2
-      conditionsString: 
-      userScript: 
-      onExecute:
-        m_PersistentCalls:
-          m_Calls: []
-      canvasRect:
-        serializedVersion: 2
-        x: 570
-        y: 670
-        width: 160
-        height: 30
-    - id: 16
-      fields:
-      - title: Title
-        value: 'YOU: "Take out the goop."'
-        type: 0
-        typeString: 
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-      - title: Actor
-        value: 1
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Conversant
-        value: 2
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Menu Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Dialogue Text
-        value: Take out the goop.
-        type: 0
-        typeString: 
-      - title: Sequence
-        value: 
-        type: 0
-        typeString: 
-      - title: Articy Id
-        value: 0x01000000000002D3
-        type: 0
-        typeString: 
-      - title: InputId
-        value: 0x01000000000002D6
-        type: 0
-        typeString: 
-      - title: OutputId
-        value: 0x01000000000002D7
-        type: 0
-        typeString: 
-      conversationID: 1
-      isRoot: 0
-      isGroup: 0
-      nodeColor: 
-      delaySimStatus: 0
-      falseConditionAction: 
-      conditionPriority: 2
-      outgoingLinks:
-      - originConversationID: 1
-        originDialogueID: 16
-        destinationConversationID: 1
-        destinationDialogueID: 17
+        destinationDialogueID: 14
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -1674,11 +2021,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 570
-        y: 720
+        x: 300
+        y: 670
         width: 160
         height: 30
-    - id: 17
+    - id: 14
       fields:
       - title: Title
         value: 'CRANE: "The lump lays splayed out in your h..."'
@@ -1711,15 +2058,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x01000000000002DA
+        value: 0x01000000000005B3
         type: 0
         typeString: 
       - title: InputId
-        value: 0x01000000000002DD
+        value: 0x01000000000005B4
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x01000000000002DE
+        value: 0x01000000000005B5
         type: 0
         typeString: 
       conversationID: 1
@@ -1737,11 +2084,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 682.5
-        y: 770
+        x: 300
+        y: 720
         width: 160
         height: 30
-    - id: 18
+    - id: 15
       fields:
       - title: Title
         value: NoFire Fireplace
@@ -1772,15 +2119,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x01000000000002E1
+        value: 0x01000000000005BB
         type: 0
         typeString: 
       - title: InputId
-        value: 0x01000000000002E3
+        value: 0x01000000000005BC
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x01000000000002E4
+        value: 0x01000000000005BD
         type: 0
         typeString: 
       conversationID: 1
@@ -1792,15 +2139,15 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 18
+        originDialogueID: 15
         destinationConversationID: 1
-        destinationDialogueID: 19
+        destinationDialogueID: 16
         isConnector: 0
         priority: 2
       - originConversationID: 1
-        originDialogueID: 18
+        originDialogueID: 15
         destinationConversationID: 1
-        destinationDialogueID: 20
+        destinationDialogueID: 17
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -1810,11 +2157,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 270
+        x: 60
         y: 720
         width: 160
         height: 30
-    - id: 19
+    - id: 16
       fields:
       - title: Title
         value: 'YOU: "Relight the fireplace."'
@@ -1845,15 +2192,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x01000000000002E7
+        value: 0x01000000000005C1
         type: 0
         typeString: 
       - title: InputId
-        value: 0x01000000000002EA
+        value: 0x01000000000005C2
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x01000000000002EB
+        value: 0x01000000000005C3
         type: 0
         typeString: 
       conversationID: 1
@@ -1865,9 +2212,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 19
+        originDialogueID: 16
         destinationConversationID: 1
-        destinationDialogueID: 21
+        destinationDialogueID: 18
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -1877,11 +2224,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 232.5
+        x: 60
         y: 770
         width: 160
         height: 30
-    - id: 20
+    - id: 17
       fields:
       - title: Title
         value: 'YOU: "Leave."'
@@ -1912,15 +2259,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x01000000000002EE
+        value: 0x01000000000005C8
         type: 0
         typeString: 
       - title: InputId
-        value: 0x01000000000002F1
+        value: 0x01000000000005C9
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x01000000000002F2
+        value: 0x01000000000005CA
         type: 0
         typeString: 
       conversationID: 1
@@ -1932,7 +2279,7 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 20
+        originDialogueID: 17
         destinationConversationID: 1
         destinationDialogueID: 2
         isConnector: 0
@@ -1944,11 +2291,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 457.5
+        x: 300
         y: 770
         width: 160
         height: 30
-    - id: 21
+    - id: 18
       fields:
       - title: Title
         value: 'Jump to: [FIREPLACE: "The flames look muffled beneath the..."]'
@@ -1979,11 +2326,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x01000000000002F7
+        value: 0x01000000000005D1
         type: 0
         typeString: 
       - title: InputId
-        value: 0x01000000000002FA
+        value: 0x01000000000005D2
         type: 0
         typeString: 
       conversationID: 1
@@ -1995,7 +2342,7 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 21
+        originDialogueID: 18
         destinationConversationID: 1
         destinationDialogueID: 3
         isConnector: 0
@@ -2007,11 +2354,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 232.5
+        x: 30
         y: 820
         width: 160
         height: 30
-    - id: 22
+    - id: 19
       fields:
       - title: Title
         value: Fireplace Initial
@@ -2042,15 +2389,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000031B
+        value: 0x01000000000005DB
         type: 0
         typeString: 
       - title: InputId
-        value: 0x010000000000031D
+        value: 0x01000000000005DC
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x010000000000031E
+        value: 0x01000000000005DD
         type: 0
         typeString: 
       conversationID: 1
@@ -2062,9 +2409,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 22
+        originDialogueID: 19
         destinationConversationID: 1
-        destinationDialogueID: 27
+        destinationDialogueID: 24
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -2074,11 +2421,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 570
+        x: 300
         y: 170
         width: 160
         height: 30
-    - id: 23
+    - id: 20
       fields:
       - title: Title
         value: 'YOU: "Take the lid off."'
@@ -2109,15 +2456,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000320
+        value: 0x01000000000005E0
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000323
+        value: 0x01000000000005E1
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000324
+        value: 0x01000000000005E2
         type: 0
         typeString: 
       conversationID: 1
@@ -2129,23 +2476,26 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 23
+        originDialogueID: 20
         destinationConversationID: 1
-        destinationDialogueID: 12
+        destinationDialogueID: 11
         isConnector: 0
         priority: 2
       conditionsString: Variable["fireplace.pot_on_fireplace"]
-      userScript: GainItem("dutch_pot_lid")
+      userScript: 'GainItem("dutch_pot_lid");
+
+        Variable["inventory.pot_lid"]
+        = true'
       onExecute:
         m_PersistentCalls:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 270
+        x: 60
         y: 370
         width: 160
         height: 30
-    - id: 24
+    - id: 21
       fields:
       - title: Title
         value: 'CRANE: "Caught off guard, the crane lets th..."'
@@ -2177,15 +2527,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000032A
+        value: 0x01000000000005E8
         type: 0
         typeString: 
       - title: InputId
-        value: 0x010000000000032C
+        value: 0x01000000000005E9
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x010000000000032D
+        value: 0x01000000000005EA
         type: 0
         typeString: 
       conversationID: 1
@@ -2197,9 +2547,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 24
+        originDialogueID: 21
         destinationConversationID: 1
-        destinationDialogueID: 25
+        destinationDialogueID: 22
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -2209,11 +2559,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 570
+        x: 300
         y: 420
         width: 160
         height: 30
-    - id: 25
+    - id: 22
       fields:
       - title: Title
         value: 'FIREPLACE: "The flames are smothered no more. Y..."'
@@ -2245,15 +2595,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000332
+        value: 0x01000000000005F0
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000335
+        value: 0x01000000000005F1
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000336
+        value: 0x01000000000005F2
         type: 0
         typeString: 
       conversationID: 1
@@ -2265,7 +2615,7 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 25
+        originDialogueID: 22
         destinationConversationID: 1
         destinationDialogueID: 2
         isConnector: 0
@@ -2277,11 +2627,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 930
+        x: 570
         y: 470
         width: 160
         height: 30
-    - id: 26
+    - id: 23
       fields:
       - title: Title
         value: 'YOU: "Place the pot on the fireplace."'
@@ -2312,15 +2662,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000033F
+        value: 0x01000000000005F7
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000342
+        value: 0x01000000000005F8
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000343
+        value: 0x01000000000005F9
         type: 0
         typeString: 
       conversationID: 1
@@ -2332,23 +2682,26 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 26
+        originDialogueID: 23
         destinationConversationID: 1
-        destinationDialogueID: 31
+        destinationDialogueID: 28
         isConnector: 0
         priority: 2
-      conditionsString: false == Variable["fireplace.pot_on_fireplace"]   and  Variable["fireplace.player_has_pot"]
-      userScript: Variable["fireplace.pot_on_fireplace"] = true
+      conditionsString: false == Variable["fireplace.pot_on_fireplace"]   and  Variable["inventory.pot"]
+      userScript: 'Variable["fireplace.pot_on_fireplace"] = true;
+
+        Variable["inventory.pot"]
+        = false'
       onExecute:
         m_PersistentCalls:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 795
+        x: 480
         y: 320
         width: 160
         height: 30
-    - id: 27
+    - id: 24
       fields:
       - title: Title
         value: fireplace.pot_on_fireplace
@@ -2379,11 +2732,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000346
+        value: 0x01000000000005FD
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000348
+        value: 0x01000000000005FE
         type: 0
         typeString: 
       conversationID: 1
@@ -2395,15 +2748,15 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 27
+        originDialogueID: 24
         destinationConversationID: 1
-        destinationDialogueID: 28
+        destinationDialogueID: 25
         isConnector: 0
         priority: 2
       - originConversationID: 1
-        originDialogueID: 27
+        originDialogueID: 24
         destinationConversationID: 1
-        destinationDialogueID: 29
+        destinationDialogueID: 26
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -2413,11 +2766,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 570
+        x: 300
         y: 220
         width: 160
         height: 30
-    - id: 28
+    - id: 25
       fields:
       - title: Title
         value: fireplace.pot_on_fireplace
@@ -2448,11 +2801,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000346
+        value: 0x01000000000005FD
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000349
+        value: 0x01000000000005FF
         type: 0
         typeString: 
       conversationID: 1
@@ -2464,9 +2817,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 28
+        originDialogueID: 25
         destinationConversationID: 1
-        destinationDialogueID: 30
+        destinationDialogueID: 27
         isConnector: 0
         priority: 2
       conditionsString: Variable["fireplace.pot_on_fireplace"]
@@ -2476,11 +2829,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 345
+        x: 120
         y: 270
         width: 160
         height: 30
-    - id: 29
+    - id: 26
       fields:
       - title: Title
         value: '!(fireplace.pot_on_fireplace)'
@@ -2511,11 +2864,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000346
+        value: 0x01000000000005FD
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x010000000000034A
+        value: 0x0100000000000600
         type: 0
         typeString: 
       conversationID: 1
@@ -2527,9 +2880,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 29
+        originDialogueID: 26
         destinationConversationID: 1
-        destinationDialogueID: 26
+        destinationDialogueID: 23
         isConnector: 0
         priority: 2
       conditionsString: (Variable["fireplace.pot_on_fireplace"]) == false
@@ -2539,11 +2892,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 795
+        x: 480
         y: 270
         width: 160
         height: 30
-    - id: 30
+    - id: 27
       fields:
       - title: Title
         value: Fireplace Pot
@@ -2574,15 +2927,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000034F
+        value: 0x0100000000000604
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000351
+        value: 0x0100000000000605
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000352
+        value: 0x0100000000000606
         type: 0
         typeString: 
       conversationID: 1
@@ -2594,13 +2947,13 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 30
+        originDialogueID: 27
         destinationConversationID: 1
-        destinationDialogueID: 23
+        destinationDialogueID: 20
         isConnector: 0
         priority: 2
       - originConversationID: 1
-        originDialogueID: 30
+        originDialogueID: 27
         destinationConversationID: 1
         destinationDialogueID: 4
         isConnector: 0
@@ -2612,11 +2965,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 870
+        x: 540
         y: 420
         width: 160
         height: 30
-    - id: 31
+    - id: 28
       fields:
       - title: Title
         value: 'Jump to: [Fireplace Pot]'
@@ -2647,11 +3000,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000357
+        value: 0x010000000000060C
         type: 0
         typeString: 
       - title: InputId
-        value: 0x010000000000035A
+        value: 0x010000000000060D
         type: 0
         typeString: 
       conversationID: 1
@@ -2663,9 +3016,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 31
+        originDialogueID: 28
         destinationConversationID: 1
-        destinationDialogueID: 30
+        destinationDialogueID: 27
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -2675,14 +3028,14 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 870
+        x: 540
         y: 370
         width: 160
         height: 30
-    - id: 32
+    - id: 29
       fields:
       - title: Title
-        value: 'YOU: "Move the pot away from the fire."'
+        value: 'FIREPLACE: "You deftly realise that the fire is..."'
         type: 0
         typeString: 
       - title: Description
@@ -2690,11 +3043,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Actor
-        value: 1
+        value: 2
         type: 5
         typeString: CustomFieldType_Actor
       - title: Conversant
-        value: 2
+        value: 1
         type: 5
         typeString: CustomFieldType_Actor
       - title: Menu Text
@@ -2702,7 +3055,8 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Dialogue Text
-        value: Move the pot away from the fire.
+        value: You deftly realise that the fire is too strong. You pull the crane
+          so that the pot is no longer above the fire.
         type: 0
         typeString: 
       - title: Sequence
@@ -2710,15 +3064,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000361
+        value: 0x0100000000000614
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000364
+        value: 0x0100000000000615
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000365
+        value: 0x0100000000000616
         type: 0
         typeString: 
       conversationID: 1
@@ -2730,23 +3084,23 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 32
+        originDialogueID: 29
         destinationConversationID: 1
-        destinationDialogueID: 33
+        destinationDialogueID: 30
         isConnector: 0
         priority: 2
-      conditionsString: 
+      conditionsString: Variable["candle_crafting.melt_tallow_success"]
       userScript: 
       onExecute:
         m_PersistentCalls:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 682.5
+        x: 540
         y: 620
         width: 160
         height: 30
-    - id: 33
+    - id: 30
       fields:
       - title: Title
         value: 'CRANE: "The crane lets out an annoyed grunt..."'
@@ -2779,15 +3133,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000036A
+        value: 0x010000000000061C
         type: 0
         typeString: 
       - title: InputId
-        value: 0x010000000000036D
+        value: 0x010000000000061D
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x010000000000036E
+        value: 0x010000000000061E
         type: 0
         typeString: 
       conversationID: 1
@@ -2799,9 +3153,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 33
+        originDialogueID: 30
         destinationConversationID: 1
-        destinationDialogueID: 34
+        destinationDialogueID: 31
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -2811,11 +3165,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 870
+        x: 540
         y: 670
         width: 160
         height: 30
-    - id: 34
+    - id: 31
       fields:
       - title: Title
         value: 'POT: "The tallow has stopped burning. A f..."'
@@ -2848,15 +3202,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000371
+        value: 0x0100000000000623
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000373
+        value: 0x0100000000000624
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000374
+        value: 0x0100000000000625
         type: 0
         typeString: 
       conversationID: 1
@@ -2868,9 +3222,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 34
+        originDialogueID: 31
         destinationConversationID: 1
-        destinationDialogueID: 35
+        destinationDialogueID: 32
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -2880,11 +3234,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 870
+        x: 540
         y: 720
         width: 160
         height: 30
-    - id: 35
+    - id: 32
       fields:
       - title: Title
         value: fireplace.player_has_sieve
@@ -2915,11 +3269,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000378
+        value: 0x010000000000062A
         type: 0
         typeString: 
       - title: InputId
-        value: 0x010000000000037A
+        value: 0x010000000000062B
         type: 0
         typeString: 
       conversationID: 1
@@ -2931,15 +3285,15 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 35
+        originDialogueID: 32
         destinationConversationID: 1
-        destinationDialogueID: 36
+        destinationDialogueID: 33
         isConnector: 0
         priority: 2
       - originConversationID: 1
-        originDialogueID: 35
+        originDialogueID: 32
         destinationConversationID: 1
-        destinationDialogueID: 37
+        destinationDialogueID: 34
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -2949,11 +3303,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 907.5
+        x: 540
         y: 770
         width: 160
         height: 30
-    - id: 36
+    - id: 33
       fields:
       - title: Title
         value: fireplace.player_has_sieve
@@ -2984,11 +3338,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000378
+        value: 0x010000000000062A
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x010000000000037B
+        value: 0x010000000000062C
         type: 0
         typeString: 
       conversationID: 1
@@ -3000,9 +3354,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 36
+        originDialogueID: 33
         destinationConversationID: 1
-        destinationDialogueID: 39
+        destinationDialogueID: 36
         isConnector: 0
         priority: 2
       conditionsString: Variable["fireplace.player_has_sieve"]
@@ -3012,11 +3366,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 682.5
+        x: 390
         y: 820
         width: 160
         height: 30
-    - id: 37
+    - id: 34
       fields:
       - title: Title
         value: '!(fireplace.player_has_sieve)'
@@ -3047,11 +3401,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000378
+        value: 0x010000000000062A
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x010000000000037C
+        value: 0x010000000000062D
         type: 0
         typeString: 
       conversationID: 1
@@ -3069,11 +3423,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 907.5
+        x: 570
         y: 820
         width: 160
         height: 30
-    - id: 38
+    - id: 35
       fields:
       - title: Title
         value: 'MEMORY: "Wasn''t  suet used as a burnt offeri..."'
@@ -3104,15 +3458,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000037E
+        value: 0x0100000000000630
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000381
+        value: 0x0100000000000631
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000382
+        value: 0x0100000000000632
         type: 0
         typeString: 
       conversationID: 1
@@ -3130,11 +3484,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 232.5
+        x: 60
         y: 520
         width: 160
         height: 30
-    - id: 39
+    - id: 36
       fields:
       - title: Title
         value: 'YOU: "Use the Sieve."'
@@ -3165,15 +3519,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000385
+        value: 0x0100000000000637
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000388
+        value: 0x0100000000000638
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000389
+        value: 0x0100000000000639
         type: 0
         typeString: 
       conversationID: 1
@@ -3185,9 +3539,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 39
+        originDialogueID: 36
         destinationConversationID: 1
-        destinationDialogueID: 40
+        destinationDialogueID: 37
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -3197,11 +3551,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 795
+        x: 480
         y: 870
         width: 160
         height: 30
-    - id: 40
+    - id: 37
       fields:
       - title: Title
         value: 'SIEVE: "Your glorious {dead body collector}..."'
@@ -3233,15 +3587,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x010000000000038C
+        value: 0x010000000000063E
         type: 0
         typeString: 
       - title: InputId
-        value: 0x010000000000038F
+        value: 0x010000000000063F
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000390
+        value: 0x0100000000000640
         type: 0
         typeString: 
       conversationID: 1
@@ -3253,9 +3607,9 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 40
+        originDialogueID: 37
         destinationConversationID: 1
-        destinationDialogueID: 42
+        destinationDialogueID: 38
         isConnector: 0
         priority: 2
       conditionsString: 
@@ -3265,74 +3619,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 570
+        x: 300
         y: 920
         width: 160
         height: 30
-    - id: 41
-      fields:
-      - title: Title
-        value: 'Jump to: [Golden Tallow]'
-        type: 0
-        typeString: 
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-      - title: Actor
-        value: 2
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Conversant
-        value: 1
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Menu Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Dialogue Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Sequence
-        value: Continue()
-        type: 0
-        typeString: 
-      - title: Articy Id
-        value: 0x01000000000003A0
-        type: 0
-        typeString: 
-      - title: InputId
-        value: 0x01000000000003A3
-        type: 0
-        typeString: 
-      conversationID: 1
-      isRoot: 0
-      isGroup: 1
-      nodeColor: 
-      delaySimStatus: 0
-      falseConditionAction: 
-      conditionPriority: 2
-      outgoingLinks:
-      - originConversationID: 1
-        originDialogueID: 41
-        destinationConversationID: 1
-        destinationDialogueID: 42
-        isConnector: 0
-        priority: 2
-      conditionsString: 
-      userScript: 
-      onExecute:
-        m_PersistentCalls:
-          m_Calls: []
-      canvasRect:
-        serializedVersion: 2
-        x: 795
-        y: 570
-        width: 160
-        height: 30
-    - id: 42
+    - id: 38
       fields:
       - title: Title
         value: 'Flow: Golden Tallow'
@@ -3343,11 +3634,11 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Actor
-        value: 2
+        value: 1
         type: 5
         typeString: CustomFieldType_Actor
       - title: Conversant
-        value: 1
+        value: 2
         type: 5
         typeString: CustomFieldType_Actor
       - title: Menu Text
@@ -3359,72 +3650,19 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Sequence
-        value: Continue()
+        value: 
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x01000000000003A5
+        value: 0x010000000000064A
         type: 0
         typeString: 
       - title: InputId
-        value: 0x01000000000003A8
+        value: 0x010000000000064D
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x01000000000003A9
-        type: 0
-        typeString: 
-      conversationID: 1
-      isRoot: 0
-      isGroup: 1
-      nodeColor: 
-      delaySimStatus: 0
-      falseConditionAction: 
-      conditionPriority: 2
-      outgoingLinks: []
-      conditionsString: 
-      userScript: 
-      onExecute:
-        m_PersistentCalls:
-          m_Calls: []
-      canvasRect:
-        serializedVersion: 2
-        x: 570
-        y: 970
-        width: 160
-        height: 30
-    - id: 43
-      fields:
-      - title: Title
-        value: 'Flow: Golden Tallow'
-        type: 0
-        typeString: 
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-      - title: Actor
-        value: 1
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Conversant
-        value: 2
-        type: 5
-        typeString: CustomFieldType_Actor
-      - title: Menu Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Dialogue Text
-        value: 
-        type: 0
-        typeString: 
-      - title: Sequence
-        value: 
-        type: 0
-        typeString: 
-      - title: Articy Id
-        value: 0x01000000000003A5
+        value: 0x010000000000064E
         type: 0
         typeString: 
       conversationID: 1
@@ -3442,11 +3680,11 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 20
-        y: 20
+        x: 300
+        y: 970
         width: 160
         height: 30
-    - id: 44
+    - id: 39
       fields:
       - title: Title
         value: 'YOU: "Leave."'
@@ -3477,15 +3715,15 @@ MonoBehaviour:
         type: 0
         typeString: 
       - title: Articy Id
-        value: 0x0100000000000545
+        value: 0x0100000000000656
         type: 0
         typeString: 
       - title: InputId
-        value: 0x0100000000000548
+        value: 0x0100000000000657
         type: 0
         typeString: 
       - title: OutputId
-        value: 0x0100000000000549
+        value: 0x0100000000000658
         type: 0
         typeString: 
       conversationID: 1
@@ -3497,7 +3735,7 @@ MonoBehaviour:
       conditionPriority: 2
       outgoingLinks:
       - originConversationID: 1
-        originDialogueID: 44
+        originDialogueID: 39
         destinationConversationID: 1
         destinationDialogueID: 2
         isConnector: 0
@@ -3509,13 +3747,13 @@ MonoBehaviour:
           m_Calls: []
       canvasRect:
         serializedVersion: 2
-        x: 750
+        x: 390
         y: 470
         width: 160
         height: 30
     entryGroups: []
-    canvasScrollPosition: {x: 19.427292, y: 125.830444}
-    canvasZoom: 1.1799998
+    canvasScrollPosition: {x: 0, y: 0}
+    canvasZoom: 0.85000014
   syncInfo:
     syncActors: 0
     syncItems: 0

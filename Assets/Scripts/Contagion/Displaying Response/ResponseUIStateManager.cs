@@ -55,17 +55,20 @@ namespace Contagion
 
         private void Update()
         {
-            // busy wait UI Response State
-            if (delayCounter >= 0f)
+            // Only process state changes when LogRenderer isn't busy
+            if (delayCounter >= 0f && !LogRenderer.IsBusy)
             {
                 delayCounter -= Time.unscaledDeltaTime;
-                ChangeState(); 
+                if (delayCounter <= 0f)
+                {
+                    ChangeState();
+                }
             }
         }
         
         private void RefreshResponseUI()
         {
-            if (targetState != currentState)
+            if (IsNextStateOptions)
             {
                 // hide everything 
                 ResetDisplay();
@@ -81,7 +84,7 @@ namespace Contagion
 
         private void ChangeState()
         {
-            if (delayCounter <= 0f)
+            if (IsNextStateOptions)
             {
                 switch (targetState)
                 {
@@ -101,6 +104,7 @@ namespace Contagion
 
         private void ResetDisplay()
         {
+            Debug.Log("resetting display");
             VisibilityManager.HideElement(VisibilityManager.optionsPanel);
             VisibilityManager.HideElement(VisibilityManager.continueButton);
             currentState = ResponseState.NONE;

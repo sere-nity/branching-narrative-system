@@ -25,6 +25,7 @@ namespace Contagion
             string spokenLine = dialogueEntry.subtitleText;
         
             // Format: "SPEAKER - Dialogue text"
+            Debug.Log("Setting text to: " + $"{speakerName} - {spokenLine}");
             logText.text = $"{speakerName} - {spokenLine}";
         }
     }

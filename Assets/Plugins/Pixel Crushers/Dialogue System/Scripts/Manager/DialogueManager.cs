@@ -25,7 +25,7 @@ namespace PixelCrushers.DialogueSystem
         {
             get
             {
-                if (m_instance == null) m_instance = GameObject.FindObjectOfType<DialogueSystemController>();
+                if (m_instance == null) m_instance = GameObjectUtility.FindFirstObjectByType<DialogueSystemController>();
                 return m_instance;
             }
         }
@@ -36,7 +36,7 @@ namespace PixelCrushers.DialogueSystem
         /// <value><c>true</c> if has instance; otherwise, <c>false</c>.</value>
         public static bool hasInstance { get { return instance != null; } }
 
-#if UNITY_2019_3_OR_NEWER
+#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void InitStaticVariables()
         {
@@ -180,6 +180,12 @@ namespace PixelCrushers.DialogueSystem
         public static string lastConversationStarted { get { return hasInstance ? instance.lastConversationStarted : string.Empty; } }
 
         /// <summary>
+        /// Gets the title of the last conversation that ended.
+        /// </summary>
+        /// <value>The title of the last conversation ended.</value>
+        public static string lastConversationEnded { get { return hasInstance ? instance.lastConversationEnded : string.Empty; } }
+
+        /// <summary>
         /// Gets the ID of the last conversation started.
         /// </summary>
         public static int lastConversationID { get { return hasInstance ? instance.lastConversationID : -1; } }
@@ -198,6 +204,25 @@ namespace PixelCrushers.DialogueSystem
         /// Gets the active conversation's ConversationView.
         /// </summary>
         public static ConversationView conversationView { get { return hasInstance ? instance.conversationView : null; } }
+
+        /// <summary>
+        /// Reevaluate links after showing subtitle in case subtitle Sequence or OnConversationLine changes link conditions. If you know this can't happen, you can UNtick this checkbox to improve performance.
+        /// </summary>
+        public static bool reevaluateLinksAfterSubtitle { get { return hasInstance ? instance.reevaluateLinksAfterSubtitle : true; } }
+
+        /// <summary>
+        /// If a group node's Conditions are true, don't evaluate sibling group nodes.
+        /// </summary>
+        public static bool useLinearGroupMode { get { return hasInstance ? instance.useLinearGroupMode : false; } }
+
+        /// <summary>
+        /// If <c>true</c>, Dialogue System Triggers set to OnStart should wait until save data has been applied or variables initialized.
+        /// </summary>
+        public static bool onStartTriggerWaitForSaveDataApplied
+        {
+            get { return hasInstance ? instance.onStartTriggerWaitForSaveDataApplied : false; }
+            set { if (hasInstance) instance.onStartTriggerWaitForSaveDataApplied = value; }
+        }
 
         /// <summary>
         /// Gets or sets the debug level.
@@ -415,6 +440,47 @@ namespace PixelCrushers.DialogueSystem
         }
 
         /// <summary>
+        /// Returns a conversation title given its ID, or empty string if no conversation has the ID.
+        /// </summary>
+        public static string GetConversationTitle(int conversationID)
+        {
+            return hasInstance ? instance.GetConversationTitle(conversationID) : string.Empty;
+        }
+
+        /// <summary>
+        /// Starts a conversation, which also broadcasts an OnConversationStart message to the 
+        /// actor and conversant. Your scripts can listen for OnConversationStart to do anything
+        /// necessary at the beginning of a conversation, such as pausing other gameplay or 
+        /// temporarily disabling player control. See the Feature Demo scene, which uses the
+        /// SetEnabledOnDialogueEvent component to disable player control during conversations.
+        /// </summary>
+        /// <param name='title'>
+        /// The title of the conversation to look up in the master database.
+        /// </param>
+        /// <param name='actor'>
+        /// The transform of the actor (primary participant). The sequencer uses this to direct 
+        /// camera angles and perform other actions. In PC-NPC conversations, the actor is usually
+        /// the PC.
+        /// </param>
+        /// <param name='conversant'>
+        /// The transform of the conversant (the other participant). The sequencer uses this to 
+        /// direct camera angles and perform other actions. In PC-NPC conversations, the conversant
+        /// is usually the NPC.
+        /// </param>
+        /// <param name='initialDialogueEntryID'> 
+        /// The initial dialogue entry ID, or -1 to start from the beginning.
+        /// </param>
+        /// <example>
+        /// StartConversation("Shopkeeper Conversation", player, shopkeeper);
+        /// </example>
+        public static void StartConversation(string title, Transform actor, Transform conversant, 
+            int initialDialogueEntryID, IDialogueUI overrideDialogueUI)
+        {
+            if (!hasInstance) return;
+            instance.StartConversation(title, actor, conversant, initialDialogueEntryID, overrideDialogueUI);
+        }
+
+        /// <summary>
         /// Starts a conversation, which also broadcasts an OnConversationStart message to the 
         /// actor and conversant. Your scripts can listen for OnConversationStart to do anything
         /// necessary at the beginning of a conversation, such as pausing other gameplay or 
@@ -521,6 +587,15 @@ namespace PixelCrushers.DialogueSystem
         }
 
         /// <summary>
+        /// Stops all current conversations immediately.
+        /// </summary>
+        public static void StopAllConversations()
+        {
+            if (!hasInstance) return;
+            instance.StopAllConversations();
+        }
+
+        /// <summary>
         /// Updates the responses for the current state of the current conversation.
         /// If the response menu entries' conditions have changed while the response menu is
         /// being shown, you can call this method to update the response menu.
@@ -529,6 +604,44 @@ namespace PixelCrushers.DialogueSystem
         {
             if (!hasInstance) return;
             instance.UpdateResponses();
+        }
+
+        /// <summary>
+        /// Sets continue button mode to Always (true) or Never (false). 
+        /// Before changing, records current mode so you can use
+        /// SetOriginalContinueMode() to revert the setting.
+        /// </summary>
+        public static void SetContinueMode(bool value)
+        {
+            if (instance != null) instance.SetContinueMode(value);
+        }
+
+        /// <summary>
+        /// Sets continue button mode.
+        /// Before changing, records current mode so you can use
+        /// SetOriginalContinueMode() to revert the setting.
+        /// </summary>
+        public static void SetContinueMode(DisplaySettings.SubtitleSettings.ContinueButtonMode mode)
+        {
+            if (instance != null) instance.SetContinueMode(mode);
+        }
+
+        /// <summary>
+        /// Reverts continue button mode to the previously-saved mode.
+        /// </summary>
+        public static void SetOriginalContinueMode()
+        {
+            if (instance != null) instance.SetOriginalContinueMode();
+        }
+
+        /// <summary>
+        /// Changes an actor's Display Name.
+        /// </summary>
+        /// <param name="actorName">Actor's Name field.</param>
+        /// <param name="newDisplayName">New Display Name value.</param>
+        public static void ChangeActorName(string actorName, string newDisplayName)
+        {
+            DialogueSystemController.ChangeActorName(actorName, newDisplayName);
         }
 
         /// <summary>
@@ -553,6 +666,27 @@ namespace PixelCrushers.DialogueSystem
         {
             if (!hasInstance) return;
             instance.Bark(conversationTitle, speaker, listener, barkHistory);
+        }
+
+        /// <summary>
+        /// Causes a character to bark a line at another character. A bark is a line spoken outside
+        /// of a full conversation. It uses a simple gameplay bark UI instead of the dialogue UI.
+        /// </summary>
+        /// <param name='conversationTitle'>
+        /// Title of the conversation that contains the bark lines. In this conversation, all 
+        /// dialogue entries linked from the first entry are considered bark lines.
+        /// </param>
+        /// <param name='speaker'>
+        /// The character barking the line.
+        /// </param>
+        /// <param name='listener'>
+        /// The character being barked at.
+        /// </param>
+        /// <param name="entryID">Dialogue entry ID to bark.</param>
+        public static void Bark(string conversationTitle, Transform speaker, Transform listener, int entryID)
+        {
+            if (!hasInstance) return;
+            instance.Bark(conversationTitle, speaker, listener, entryID);
         }
 
         /// <summary>
@@ -687,9 +821,18 @@ namespace PixelCrushers.DialogueSystem
         }
 
         /// <summary>
+        /// Hides the currently-displaying alert message and clears any pending queued alerts.
+        /// </summary>
+        public static void HideAllAlerts()
+        {
+            if (!hasInstance) return;
+            instance.HideAllAlerts();
+        }
+
+        /// <summary>
         /// Gets localized text.
         /// </summary>
-        /// <returns>If the specified field exists in the table, returns the field's 
+        /// <returns>If the specified field exists in the text tables, returns the field's 
         /// localized text for the current language. Otherwise returns the field itself.</returns>
         /// <param name="s">The field to look up.</param>
         public static string GetLocalizedText(string s)
@@ -952,7 +1095,7 @@ namespace PixelCrushers.DialogueSystem
 
         /// <summary>
         /// Loads a named asset from the registered asset bundles or from Resources.
-        /// Note: This version of LoadAsset does not load from Addressables.
+        /// Note: This version now also works with Addressables, and works synchronously.
         /// </summary>
         /// <returns>The asset, or <c>null</c> if not found.</returns>
         /// <param name="name">Name of the asset.</param>
@@ -963,7 +1106,7 @@ namespace PixelCrushers.DialogueSystem
 
         /// <summary>
         /// Loads a named asset from the registered asset bundles or from Resources.
-        /// Note: This version of LoadAsset does not load from Addressables.
+        /// Note: This version now also works with Addressables, and works synchronously.
         /// </summary>
         /// <returns>The asset, or <c>null</c> if not found.</returns>
         /// <param name="name">Name of the asset.</param>

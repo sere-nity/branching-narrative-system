@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PixelCrushers.DialogueSystem
 {
@@ -13,14 +14,30 @@ namespace PixelCrushers.DialogueSystem
     {
 
         private static Dictionary<string, Transform> registeredSubjects = new Dictionary<string, Transform>();
+        private static bool hasHookedIntoSceneLoaded = false;
 
-#if UNITY_2019_3_OR_NEWER
+#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void InitStaticVariables()
         {
             registeredSubjects = new Dictionary<string, Transform>();
+            hasHookedIntoSceneLoaded = false;
         }
 #endif
+
+        public static void HookIntoSceneLoaded()
+        {
+            if (!hasHookedIntoSceneLoaded)
+            {
+                hasHookedIntoSceneLoaded = true;
+                SceneManager.sceneLoaded += OnSceneLoaded;
+            }
+        }
+
+        private static void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
+        {
+            CleanNullSubjects();
+        }
 
         /// <summary>
         /// Registers a GameObject by name for faster lookup.
@@ -29,6 +46,7 @@ namespace PixelCrushers.DialogueSystem
         {
             if (subject == null) return;
             registeredSubjects[subject.name] = subject;
+            HookIntoSceneLoaded();
         }
 
         /// <summary>
@@ -38,6 +56,14 @@ namespace PixelCrushers.DialogueSystem
         {
             if (subject == null || !registeredSubjects.ContainsKey(subject.name)) return;
             registeredSubjects.Remove(subject.name);
+        }
+
+        /// <summary>
+        /// Clears null entries from registeredSubjects.
+        /// </summary>
+        public static void CleanNullSubjects()
+        {
+            registeredSubjects.RemoveAll(x => x == null);
         }
 
         /// <summary>
@@ -73,6 +99,18 @@ namespace PixelCrushers.DialogueSystem
             else if (string.Compare(specifier, SequencerKeywords.Listener, System.StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return listener;
+            }
+            else if (string.Compare(specifier, SequencerKeywords.SpeakerPortrait, System.StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return GetPortraitImage(speaker);
+            }
+            else if (string.Compare(specifier, SequencerKeywords.ListenerPortrait, System.StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return GetPortraitImage(listener);
+            }
+            else if (specifier.StartsWith(SequencerKeywords.ActorPrefix))
+            {
+                return CharacterInfo.GetRegisteredActorTransform(specifier.Substring(SequencerKeywords.ActorPrefix.Length));
             }
             else
             {
@@ -128,7 +166,7 @@ namespace PixelCrushers.DialogueSystem
             if (t != null) return t.gameObject;
 
             // Check registered subjects:
-            if (registeredSubjects.TryGetValue(specifier, out t)) return t.gameObject;
+            if (registeredSubjects.TryGetValue(specifier, out t) && t != null) return t.gameObject;
 
             // Search for active objects in scene:
             var match = GameObject.Find(specifier);
@@ -149,6 +187,43 @@ namespace PixelCrushers.DialogueSystem
                 }
             }
             return null;
+        }
+
+        /// <returns>
+        /// The transform of the Portrait Image GameObject, or null if not found.
+        /// Must be using Standard Dialogue UI. Not for use with simultaneous conversations.
+        /// </returns>
+        public static Transform GetPortraitImage(Transform subject)
+        {
+            if (DialogueManager.standardDialogueUI == null) return null;
+            if (subject == null) return null;
+
+            var subtitleControls = DialogueManager.standardDialogueUI.conversationUIElements.standardSubtitleControls;
+            DialogueActor dialogueActor;
+            StandardUISubtitlePanel panel = null;
+
+            if (DialogueManager.isConversationActive && DialogueManager.currentConversationState != null)
+            {
+                var subtitle = DialogueManager.currentConversationState.subtitle;
+                if (subtitle.speakerInfo != null && subtitle.speakerInfo.transform == subject)
+                {
+                    panel = subtitleControls.GetPanel(subtitle, out dialogueActor);
+                }
+            }
+
+            if (panel == null)
+            {
+                StandardUISubtitlePanel defaultPanel = subtitleControls.defaultNPCPanel;
+                dialogueActor = DialogueActor.GetDialogueActorComponent(subject);
+                if (dialogueActor != null)
+                {
+                    var actor = DialogueManager.masterDatabase.GetActor(dialogueActor.actor);
+                    if (actor != null) defaultPanel = actor.IsPlayer ? subtitleControls.defaultPCPanel : subtitleControls.defaultNPCPanel;
+                }
+                panel = subtitleControls.GetActorTransformPanel(subject, defaultPanel, out dialogueActor);
+            }
+
+            return (panel != null && panel.portraitImage != null) ? panel.portraitImage.transform : null;
         }
 
         /// <summary>
@@ -212,9 +287,23 @@ namespace PixelCrushers.DialogueSystem
         {
             try
             {
-                return ((parameters != null) && (i < parameters.Length))
-                    ? (T)System.Convert.ChangeType(parameters[i], typeof(T), System.Globalization.CultureInfo.InvariantCulture)
-                    : defaultValue;
+                if ((parameters != null) && (0 <= i && i < parameters.Length))
+                {
+                    var parameter = parameters[i];
+
+                    // If we're getting a float whose string ends in 'f', remove 'f':
+                    var isNumberType = typeof(T) == typeof(float) || typeof(T) == typeof(int);
+                    if (isNumberType && parameter.EndsWith("f", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        parameter = parameter.Substring(0, parameter.Length - 1);
+                    }
+
+                    return (T)System.Convert.ChangeType(parameter, typeof(T), System.Globalization.CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    return defaultValue;
+                }
             }
             catch (System.Exception)
             {
@@ -285,16 +374,19 @@ namespace PixelCrushers.DialogueSystem
         /// <summary>
         /// Gets the audio source on a subject, using the Dialogue Manager as the subject if the
         /// specified subject is <c>null</c>. If no audio source exists on the subject, this
-        /// method adds one.
+        /// method adds one. If the subject has a Dialogue Actor with an audio source assigned
+        /// to it, this method returns that audio source.
         /// </summary>
         /// <returns>The audio source.</returns>
         /// <param name="subject">Subject.</param>
         public static AudioSource GetAudioSource(Transform subject)
         {
             GameObject go = (subject != null) ? subject.gameObject : DialogueManager.instance.gameObject;
+            DialogueActor dialogueActor = go.GetComponent<DialogueActor>();
+            if (dialogueActor != null && dialogueActor.audioSource != null) return dialogueActor.audioSource;
             AudioSource audio = go.GetComponentInChildren<AudioSource>();
             if (audio == null)
-            { 
+            {
                 audio = go.AddComponent<AudioSource>();
                 audio.playOnAwake = false;
                 audio.loop = false;

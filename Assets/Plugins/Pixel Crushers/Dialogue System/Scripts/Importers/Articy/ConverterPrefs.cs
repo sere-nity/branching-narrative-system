@@ -45,33 +45,44 @@ namespace PixelCrushers.DialogueSystem.Articy
 
         public enum FlowFragmentModes { NestedConversationGroups, ConversationGroups, Quests, Ignore }
 
-        public enum StageDirModes { Sequences, NotSequences }
+        public enum StageDirModes { Sequences, Nothing, Description }
 
-        public enum ConvertDropdownsModes { Ints, Strings }
+        public enum ConvertDropdownsModes { Int, TechnicalName, DisplayName }
 
         public enum ConvertSlotsModes { DisplayName, ID, TechnicalName }
 
         public enum RecursionModes { Off, On }
 
+        public enum CodeNodeMode { RegularEntry, GroupEntry }
+
         public string ProjectFilename { get; set; }
         public string PortraitFolder { get; set; }
         public bool UseDefaultActorsIfNoneAssignedToDialogue { get; set; }
-        public bool StageDirectionsAreSequences { get; set; }
+        public StageDirModes StageDirectionsMode { get; set; }
         public FlowFragmentModes FlowFragmentMode { get; set; }
+        public bool CreateConversationsForLooseFlow { get; set; }
         public string OtherScriptFields { get; set; }
         public string DocumentsSubmenu { get; set; }
+        public bool ImportDocuments { get; set; }
         public string TextTableDocument { get; set; }
         public string OutputFolder { get; set; }
         public bool Overwrite { get; set; }
         public ConversionSettings ConversionSettings { get; set; }
         public EncodingType EncodingType { get; set; }
         public RecursionModes RecursionMode { get; set; }
+        public CodeNodeMode ConvertInstructionsAs { get; set; }
         public ConvertDropdownsModes ConvertDropdownsAs { get; set; }
         public ConvertSlotsModes ConvertSlotsAs { get; set; }
         public bool UseTechnicalNames { get; set; }
+        public bool IncludeFeatureNameInFields { get; set; }
+        public bool SetDisplayName { get; set; }
+        public bool CustomDisplayName { get; set; }
         public bool DirectConversationLinksToEntry1 { get; set; }
         public bool ConvertMarkupToRichText { get; set; }
         public bool SplitTextOnPipes { get; set; }
+        public bool TrimWhitespace { get; set; } = true;
+        public bool ReorderIDs { get; set; }
+        public bool DelayEvaluation { get; set; }
         public string FlowFragmentScript { get; set; }
         public string VoiceOverProperty { get; set; }
         public string LocalizationXlsx { get; set; }
@@ -82,29 +93,37 @@ namespace PixelCrushers.DialogueSystem.Articy
         public const string DefaultVoiceOverProperty = "VoiceOverFile";
 
         public Encoding Encoding { get { return EncodingTypeTools.GetEncoding(EncodingType); } }
-        public bool ConvertDropdownsAsString { get { return ConvertDropdownsAs == ConvertDropdownsModes.Strings; } }
 
         public ConverterPrefs()
         {
             ProjectFilename = string.Empty;
             PortraitFolder = string.Empty;
             UseDefaultActorsIfNoneAssignedToDialogue = true;
-            StageDirectionsAreSequences = true;
+            StageDirectionsMode = StageDirModes.Sequences;
             FlowFragmentMode = FlowFragmentModes.ConversationGroups;
+            CreateConversationsForLooseFlow = false;
             OtherScriptFields = string.Empty;
             DocumentsSubmenu = string.Empty;
+            ImportDocuments = true;
             TextTableDocument = string.Empty;
             OutputFolder = "Assets";
             Overwrite = false;
             ConversionSettings = new ConversionSettings();
             EncodingType = EncodingType.Default;
             RecursionMode = RecursionModes.On;
-            ConvertDropdownsAs = ConvertDropdownsModes.Ints;
+            ConvertInstructionsAs = CodeNodeMode.RegularEntry;
+            ConvertDropdownsAs = ConvertDropdownsModes.Int;
             ConvertSlotsAs = ConvertSlotsModes.DisplayName;
             UseTechnicalNames = false;
+            IncludeFeatureNameInFields = false;
+            SetDisplayName = false;
+            CustomDisplayName = false;
             DirectConversationLinksToEntry1 = false;
             ConvertMarkupToRichText = true;
             SplitTextOnPipes = true;
+            TrimWhitespace = true;
+            ReorderIDs = false;
+            DelayEvaluation = false;
             FlowFragmentScript = DefaultFlowFragmentScript;
             VoiceOverProperty = DefaultVoiceOverProperty;
             LocalizationXlsx = string.Empty;

@@ -13,7 +13,7 @@ namespace PixelCrushers
     /// its Selectables is selected if using joystick or keyboard.
     /// </summary>
     [AddComponentMenu("")] // Use wrapper.
-    public class UIPanel : MonoBehaviour
+    public class UIPanel : MonoBehaviour, IEventSystemUser
     {
 
         [Tooltip("When enabling the panel, select this if input device is Joystick or Keyboard.")]
@@ -61,6 +61,7 @@ namespace PixelCrushers
         protected List<GameObject> selectables = new List<GameObject>();
         private float m_timeNextCheck = 0;
         private float m_timeNextRefresh = 0;
+        private int m_frameLastOpened = -1;
 
         /// <summary>
         /// If false, turns off checking of current selection to make sure a valid selectable is selected.
@@ -70,6 +71,14 @@ namespace PixelCrushers
         public static bool monitorSelection = true;
 
         protected static List<UIPanel> panelStack = new List<UIPanel>();
+
+#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void InitStaticVariables()
+        {
+            panelStack = new List<UIPanel>();
+        }
+#endif
 
         protected static UIPanel topPanel
         {
@@ -86,8 +95,9 @@ namespace PixelCrushers
         }
 
         // Kept for backward compatibility:
-        public virtual bool waitForShowAnimation { 
-            get { return waitForShowAnimationToSetOpen; } 
+        public virtual bool waitForShowAnimation
+        {
+            get { return waitForShowAnimationToSetOpen; }
             set { waitForShowAnimationToSetOpen = value; }
         }
 
@@ -104,6 +114,27 @@ namespace PixelCrushers
                 if (m_animatorMonitor == null) m_animatorMonitor = new UIAnimatorMonitor(gameObject);
                 return m_animatorMonitor;
             }
+        }
+
+        private Animator m_animator = null;
+        private Animator myAnimator
+        {
+            get
+            { 
+                if (m_animator == null) m_animator = GetComponent<Animator>() ?? GetComponentInChildren<Animator>();
+                return m_animator;
+            }
+        }
+
+        private UnityEngine.EventSystems.EventSystem m_eventSystem = null;
+        public UnityEngine.EventSystems.EventSystem eventSystem
+        {
+            get
+            {
+                if (m_eventSystem != null) return m_eventSystem;
+                return UnityEngine.EventSystems.EventSystem.current;
+            }
+            set { m_eventSystem = value; }
         }
 
         protected virtual void Start()
@@ -192,9 +223,9 @@ namespace PixelCrushers
         protected virtual void OnDisable()
         {
             StopAllCoroutines();
-            if (selectPreviousOnDisable && InputDeviceManager.autoFocus && UnityEngine.EventSystems.EventSystem.current != null && m_previousSelected != null && !selectables.Contains(m_previousSelected))
+            if (monitorSelection && selectPreviousOnDisable && InputDeviceManager.autoFocus && eventSystem != null && m_previousSelected != null && !selectables.Contains(m_previousSelected))
             {
-                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(m_previousSelected);
+                eventSystem.SetSelectedGameObject(m_previousSelected);
             }
             PopFromPanelStack();
         }
@@ -202,9 +233,15 @@ namespace PixelCrushers
         public virtual void Open()
         {
             if (panelState == PanelState.Open || panelState == PanelState.Opening) return;
+            if (panelState == PanelState.Closing) animatorMonitor.CancelCurrentAnimation();
+            m_frameLastOpened = Time.frameCount;
             panelState = PanelState.Opening;
             gameObject.SetActive(true);
             onOpen.Invoke();
+            if (myAnimator != null && myAnimator.isInitialized && !string.IsNullOrEmpty(hideAnimationTrigger))
+            {
+                myAnimator.ResetTrigger(hideAnimationTrigger);
+            }
             animatorMonitor.SetTrigger(showAnimationTrigger, OnVisible, waitForShowAnimation);
 
             // With quick panel changes, panel may not reach OnEnable/OnDisable before being reused.
@@ -215,16 +252,21 @@ namespace PixelCrushers
         public virtual void Close()
         {
             PopFromPanelStack();
+            if (gameObject == null) return;
             if (gameObject.activeInHierarchy) CancelInvoke();
             if (panelState == PanelState.Closed || panelState == PanelState.Closing) return;
             panelState = PanelState.Closing;
             onClose.Invoke();
+            if (myAnimator != null && myAnimator.isInitialized && !string.IsNullOrEmpty(showAnimationTrigger))
+            {
+                myAnimator.ResetTrigger(showAnimationTrigger);
+            }
             animatorMonitor.SetTrigger(hideAnimationTrigger, OnHidden, true);
 
             // Deselect ours:
-            if (UnityEngine.EventSystems.EventSystem.current != null && selectables.Contains(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject))
+            if (eventSystem != null && selectables.Contains(eventSystem.currentSelectedGameObject))
             {
-                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+                eventSystem.SetSelectedGameObject(null);
             }
         }
 
@@ -244,7 +286,7 @@ namespace PixelCrushers
             RefreshSelectablesList();
 
             // Deselect the previous selection if it's not ours:
-            m_previousSelected = (UnityEngine.EventSystems.EventSystem.current != null) ? UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject : null;
+            m_previousSelected = (eventSystem != null) ? eventSystem.currentSelectedGameObject : null;
             if (InputDeviceManager.autoFocus && firstSelected != null && m_previousSelected != null && !selectables.Contains(m_previousSelected))
             {
                 var previousSelectable = m_previousSelected.GetComponent<UnityEngine.UI.Selectable>();
@@ -264,20 +306,64 @@ namespace PixelCrushers
             if (!(isOpen && topPanel == this)) return;
             if (InputDeviceManager.isBackButtonDown)
             {
-                onBackButtonDown.Invoke();
+                if (Time.frameCount != m_frameLastOpened)
+                {
+                    onBackButtonDown.Invoke();
+                }
             }
             else
             {
-                m_lastSelected = (UnityEngine.EventSystems.EventSystem.current != null) ? UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject : null;
-                if (Time.realtimeSinceStartup >= m_timeNextCheck && focusCheckFrequency > 0 && topPanel == this && InputDeviceManager.autoFocus)
+                var currentEventSystem = eventSystem;
+                if (currentEventSystem != null)
                 {
-                    m_timeNextCheck = Time.realtimeSinceStartup + focusCheckFrequency;
-                    CheckFocus();
+                    var currentSelected = currentEventSystem.currentSelectedGameObject;
+                    if (currentSelected != null && selectables.Contains(currentSelected))
+                    {
+                        m_lastSelected = currentSelected;
+                    }
+                    if (Time.realtimeSinceStartup >= m_timeNextCheck && focusCheckFrequency > 0 && topPanel == this && InputDeviceManager.autoFocus)
+                    {
+                        m_timeNextCheck = Time.realtimeSinceStartup + focusCheckFrequency;
+                        CheckFocus();
+                    }
+                    if (Time.realtimeSinceStartup >= m_timeNextRefresh && refreshSelectablesFrequency > 0 && topPanel == this && InputDeviceManager.autoFocus)
+                    {
+                        m_timeNextRefresh = Time.realtimeSinceStartup + refreshSelectablesFrequency;
+                        RefreshSelectablesList();
+                    }
                 }
-                if (Time.realtimeSinceStartup >= m_timeNextRefresh && refreshSelectablesFrequency > 0 && topPanel == this && InputDeviceManager.autoFocus)
+            }
+        }
+
+        public virtual void SetFocus(GameObject selectable)
+        {
+            firstSelected = null;
+            m_lastSelected = selectable;
+            if (InputDeviceManager.autoFocus)
+            {
+                if (eventSystem != null)
                 {
-                    m_timeNextRefresh = Time.realtimeSinceStartup + refreshSelectablesFrequency;
-                    RefreshSelectablesList();
+                    eventSystem.SetSelectedGameObject(null);
+                }
+                if (m_lastSelected != null)
+                {                    
+                    UIUtility.Select(m_lastSelected.GetComponent<UnityEngine.UI.Selectable>(), true, eventSystem);
+                }
+                CheckFocus();
+            }
+            else
+            {
+                if (eventSystem != null)
+                {
+                    var selectableComponent = (selectable != null) ? selectable.GetComponent<UnityEngine.UI.Selectable>() : null;
+                    if (selectableComponent != null)
+                    {
+                        UIUtility.Select(selectableComponent, true, eventSystem);
+                    }
+                    else
+                    {
+                        eventSystem.SetSelectedGameObject(selectable);
+                    }
                 }
             }
         }
@@ -286,13 +372,13 @@ namespace PixelCrushers
         {
             if (!monitorSelection) return;
             if (!InputDeviceManager.autoFocus) return;
-            if (UnityEngine.EventSystems.EventSystem.current == null) return;
+            if (eventSystem == null) return;
             if (topPanel != this) return;
-            var currentSelected = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
+            var currentSelected = eventSystem.currentSelectedGameObject;
             if (currentSelected == null || !selectables.Contains(currentSelected))
             {
                 GameObject selectableToFocus = null;
-                if (m_lastSelected != null && selectables.Contains(currentSelected))
+                if (m_lastSelected != null && selectables.Contains(m_lastSelected))
                 {
                     selectableToFocus = m_lastSelected;
                 }
@@ -304,7 +390,7 @@ namespace PixelCrushers
                 }
                 if (selectableToFocus != null)
                 {
-                    UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(selectableToFocus);
+                    eventSystem.SetSelectedGameObject(selectableToFocus);
                 }
             }
         }

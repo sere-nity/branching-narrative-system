@@ -13,15 +13,19 @@ namespace PixelCrushers.DialogueSystem.Articy
     public static class ArticySchemaEditorTools
     {
 
-        public static ArticyData LoadArticyDataFromXmlFile(string xmlFilename, Encoding encoding, bool convertDropdownAsString = false, ConverterPrefs prefs = null)
+        public static ArticyData LoadArticyDataFromXmlFile(string xmlFilename, Encoding encoding, ConverterPrefs.ConvertDropdownsModes convertDropdownAs = ConverterPrefs.ConvertDropdownsModes.Int, ConverterPrefs prefs = null)
         {
-            if (Articy_3_1.Articy_3_1_EditorTools.IsSchema(xmlFilename))
+            if (Articy_4_0.Articy_4_0_EditorTools.IsSchema(xmlFilename))
             {
-                return Articy_3_1.Articy_3_1_EditorTools.LoadArticyDataFromXmlFile(xmlFilename, encoding, convertDropdownAsString, prefs);
+                return Articy_4_0.Articy_4_0_EditorTools.LoadArticyDataFromXmlFile(xmlFilename, encoding, convertDropdownAs, prefs);
+            }
+            else if (Articy_3_1.Articy_3_1_EditorTools.IsSchema(xmlFilename))
+            {
+                return Articy_3_1.Articy_3_1_EditorTools.LoadArticyDataFromXmlFile(xmlFilename, encoding, convertDropdownAs, prefs);
             }
             else if (Articy_2_4.Articy_2_4_EditorTools.IsSchema(xmlFilename))
             {
-                return Articy_2_4.Articy_2_4_EditorTools.LoadArticyDataFromXmlFile(xmlFilename, encoding, convertDropdownAsString, prefs);
+                return Articy_2_4.Articy_2_4_EditorTools.LoadArticyDataFromXmlFile(xmlFilename, encoding, convertDropdownAs, prefs);
             }
             else if (Articy_2_2.Articy_2_2_EditorTools.IsSchema(xmlFilename))
             {
@@ -33,6 +37,7 @@ namespace PixelCrushers.DialogueSystem.Articy
             }
             else
             {
+                UnityEngine.Debug.LogWarning($"No valid schema data found in {xmlFilename}. Remember to tick 'Export XML Namespace' when exporting.");
                 return null;
             }
         }

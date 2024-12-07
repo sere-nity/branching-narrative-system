@@ -17,34 +17,42 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
 
         private List<Field> clipboardFields = null;
 
-        private void DrawAssetSection<T>(string label, List<T> assets, AssetFoldouts foldouts, ref string filter) where T : Asset, new()
+        private void DrawAssetSection<T>(string label, List<T> assets, AssetFoldouts foldouts, ref string filter, ref bool hideFilteredOutAssets) where T : Asset, new()
         {
-            DrawAssetSection<T>(label, assets, foldouts, null, null, ref filter);
+            DrawAssetSection<T>(label, assets, foldouts, null, null, ref filter, ref hideFilteredOutAssets);
         }
 
-        private void DrawAssetSection<T>(string label, List<T> assets, AssetFoldouts foldouts, Action menuDelegate, ref string filter) where T : Asset, new()
+        private void DrawAssetSection<T>(string label, List<T> assets, AssetFoldouts foldouts, Action menuDelegate, ref string filter, ref bool hideFilteredOutAssets) where T : Asset, new()
         {
-            DrawAssetSection<T>(label, assets, foldouts, menuDelegate, null, ref filter);
+            DrawAssetSection<T>(label, assets, foldouts, menuDelegate, null, ref filter, ref hideFilteredOutAssets);
         }
 
-        private void DrawAssetSection<T>(string label, List<T> assets, AssetFoldouts foldouts, Action menuDelegate, Action syncDatabaseDelegate, ref string filter) where T : Asset, new()
+        private void DrawAssetSection<T>(string label, List<T> assets, AssetFoldouts foldouts, Action menuDelegate, Action syncDatabaseDelegate, ref string filter, ref bool hideFilteredOutAssets) where T : Asset, new()
         {
-            DrawFilterMenuBar(label, menuDelegate, ref filter);
+            DrawFilterMenuBar(label, menuDelegate, ref filter, ref hideFilteredOutAssets);
             if (syncDatabaseDelegate != null) syncDatabaseDelegate();
             DrawAssets<T>(label, assets, foldouts, filter);
         }
 
-        private void DrawFilterMenuBar(string label, Action menuDelegate, ref string filter)
+        private bool DrawFilterMenuBar(string label, Action menuDelegate, ref string filter, ref bool hideFilteredOutAssets)
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(label + "s", EditorStyles.boldLabel);
             GUILayout.FlexibleSpace();
 
-            filter = EditorGUILayout.TextField(GUIContent.none, filter, "ToolbarSeachTextField");
-            GUILayout.Label(string.Empty, "ToolbarSeachCancelButtonEmpty");
+            EditorGUI.BeginChangeCheck();
+
+            filter = EditorGUILayout.TextField(GUIContent.none, filter, MoreEditorGuiUtility.ToolbarSearchTextFieldName);
+            GUILayout.Label(string.Empty, MoreEditorGuiUtility.ToolbarSearchCancelButtonEmpty);
+
+            hideFilteredOutAssets = EditorGUILayout.Toggle(hideFilteredOutAssets, EditorStyles.radioButton, GUILayout.Width(22));
+
+            var filterChanged = EditorGUI.EndChangeCheck();
 
             if (menuDelegate != null) menuDelegate();
             EditorGUILayout.EndHorizontal();
+
+            return filterChanged;
         }
 
         private void DrawAssets<T>(string label, List<T> assets, AssetFoldouts foldouts, string filter) where T : Asset
@@ -131,6 +139,10 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             if (EditorGUI.EndChangeCheck()) SetDatabaseDirty("Name");
             if (asset is Actor) DrawActorPortrait(asset as Actor);
             if (asset is Item) DrawItemPropertiesFirstPart(asset as Item);
+            if (customDrawAssetInspector != null)
+            {
+                customDrawAssetInspector(database, asset);
+            }
         }
 
         public void DrawAssetSpecificPropertiesSecondPart(Asset asset, int index, AssetFoldouts foldouts)
@@ -169,7 +181,14 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 SetDatabaseDirty("Add Field");
             }
             EditorGUILayout.EndHorizontal();
-            if (foldouts.fields[index]) DrawFieldsSection(asset.fields);
+            if (foldouts.fields[index])
+            {
+                DrawFieldsSection(asset.fields);
+            }
+            else
+            {
+                CheckFields(asset.fields);
+            }
             if (EditorGUI.EndChangeCheck())
             {
                 if (asset is Item) BuildLanguageListFromFields(asset.fields);
@@ -283,6 +302,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             startEntry.Title = "START";
             startEntry.currentSequence = "None()";
             startEntry.ActorID = database.playerID;
+            startEntry.canvasRect = new Rect(DialogueEntry.CanvasRectWidth, canvasRectHeight, canvasRectWidth, canvasRectHeight);
             conversation.dialogueEntries.Add(startEntry);
             SetDatabaseDirty("Initialize Conversation");
         }

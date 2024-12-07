@@ -1,6 +1,4 @@
-// Recompile at 06/11/2024 17:43:19
-
-
+// Recompile at 1/21/2023 3:18:05 PM
 // Copyright (c) Pixel Crushers. All rights reserved.
 
 using UnityEngine;
@@ -10,7 +8,7 @@ namespace PixelCrushers
 {
 
     /// <summary>
-    /// A UITextField can refer to a UI.Text or TMPro.TextMeshProUGUI.
+    /// A UITextField can refer to a UI.Text, TMPro.TextMeshProUGUI, or SuperTextMesh.
     /// </summary>
     [Serializable]
     public class UITextField

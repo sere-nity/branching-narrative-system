@@ -26,13 +26,16 @@ namespace PixelCrushers.DialogueSystem
         [Tooltip("Dialogue entry to jump to.")]
         public int entryID;
 
-        //[HideInInspector]
-        //public bool computed
+        [Tooltip("Stop any active conversations before starting this one.")]
+        public bool exclusive = false;
+
+        [Tooltip("(Optional) Assign if you want to override dialogue UI for this conversation.")]
+        public AbstractDialogueUI overrideDialogueUI;
 
         public string GetEditorDialogueText()
         {
             var dialogueText = PreviewUI.GetDialogueText(conversation, jumpToSpecificEntry ? entryID : -1);
-            return "[" + conversation + "] '" + dialogueText + "'";
+            return "'" + dialogueText + "'";
         }
 
     }

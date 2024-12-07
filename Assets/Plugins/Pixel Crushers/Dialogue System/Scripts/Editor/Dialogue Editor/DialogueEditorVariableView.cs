@@ -59,6 +59,8 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         private double lastTimeVariableNamesChecked = 0;
         private HashSet<string> conflictedVariableNames = new HashSet<string>();
 
+        private HashSet<int> syncedVariableIDs = null;
+
         // VariableGroup class is defined below.
         private const string UngroupedVariableGroup = "(Ungrouped)";
         private Dictionary<string, VariableGroup> m_variableGroups = null;
@@ -91,6 +93,16 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         public void RefreshView()
         {
             m_variableGroups = null;
+            syncedVariableIDs = null;
+        }
+
+        private void RecordSyncedVariableIDs()
+        {
+            syncedVariableIDs = new HashSet<int>();
+            if (database.syncInfo.syncVariables && database.syncInfo.syncVariablesDatabase != null)
+            {
+                database.syncInfo.syncVariablesDatabase.variables.ForEach(x => syncedVariableIDs.Add(x.id));
+            }
         }
 
         private List<Variable> GenerateFilteredVariableList()
@@ -117,13 +129,14 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
 
         private Dictionary<string, VariableGroup> GenerateGroupedVariableList()
         {
-            var dict = new Dictionary<string, VariableGroup>();            
+            var dict = new Dictionary<string, VariableGroup>();
+            if (syncedVariableIDs == null) RecordSyncedVariableIDs();
             if (string.IsNullOrEmpty(variableFilter) && !showVariableGroupFoldouts)
             {
                 // If no filter and not showing groups, add a single group that uses database.variables directly to allow dragging:
                 var variableGroup = new VariableGroup(database, UngroupedVariableGroup, database.variables,
                     expandedVariableGroups, conflictedVariableNames, !isDialogueEditorWindow, runtimeValues,
-                    UpdateVariableWindows, CreateNewVariable);
+                    UpdateVariableWindows, CreateNewVariable, syncedVariableIDs);
                 variableGroup.group = UngroupedVariableGroup;
                 variableGroup.variableList = database.variables;
                 dict.Add(UngroupedVariableGroup, variableGroup);
@@ -142,7 +155,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                     {
                         var variableGroup = new VariableGroup(database, group, new List<Variable>(),
                             expandedVariableGroups, conflictedVariableNames, !isDialogueEditorWindow, runtimeValues,
-                            UpdateVariableWindows, CreateNewVariable);
+                            UpdateVariableWindows, CreateNewVariable, syncedVariableIDs);
                         dict.Add(group, variableGroup);
                     }
                     dict[group].variableList.Add(variable);
@@ -172,14 +185,18 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             }
 
             EditorGUI.BeginChangeCheck();
-            variableFilter = EditorGUILayout.TextField(GUIContent.none, variableFilter, "ToolbarSeachTextField");
-            GUILayout.Label(string.Empty, "ToolbarSeachCancelButtonEmpty");
+            variableFilter = EditorGUILayout.TextField(GUIContent.none, variableFilter, MoreEditorGuiUtility.ToolbarSearchTextFieldName);
+            GUILayout.Label(string.Empty, MoreEditorGuiUtility.ToolbarSearchCancelButtonEmpty);
             if (EditorGUI.EndChangeCheck()) RefreshView();
 
             DrawVariableMenu();
             EditorGUILayout.EndHorizontal();
 
-            if (database.syncInfo.syncVariables) DrawVariableSyncDatabase();
+            if (database.syncInfo.syncVariables)
+            {
+                DrawVariableSyncDatabase();
+                if (syncedVariableIDs == null) RecordSyncedVariableIDs();
+            }
             DrawVariables();
         }
 
@@ -231,6 +248,14 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         private void ToggleSyncVariablesFromDB()
         {
             database.syncInfo.syncVariables = !database.syncInfo.syncVariables;
+            if (!database.syncInfo.syncVariables && database.syncInfo.syncVariablesDatabase!= null)
+            {
+                if (EditorUtility.DisplayDialog("Disconnect Synced DB",
+                    "Also delete synced variables from this database?", "Yes", "No"))
+                {
+                    database.variables.RemoveAll(x => syncedVariableIDs.Contains(x.id));
+                }
+            }
             EditorUtility.SetDirty(database);
         }
 
@@ -250,6 +275,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             {
                 database.syncInfo.syncVariablesDatabase = newDatabase;
                 database.SyncVariables();
+                RefreshView();
                 if (database != null) EditorUtility.SetDirty(database);
             }
             if (GUILayout.Button(new GUIContent("Sync Now", "Syncs from the database."), EditorStyles.miniButton, GUILayout.Width(72)))
@@ -380,6 +406,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             public HashSet<string> conflictedVariableNames;
             public bool canShowRuntimeValues = false;
             public Dictionary<string, RuntimeValue> runtimeValues;
+            public HashSet<int> syncedVariableIDs;
             public ReorderableList reorderableList;
 
             public System.Action refreshVariablesView = null;
@@ -388,7 +415,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             public VariableGroup(DialogueDatabase database, string group, List<Variable> variableList,
                 List<string> variableGroupFoldouts, HashSet<string> conflictedVariableNames, 
                 bool canShowRuntimeValues, Dictionary<string, RuntimeValue> runtimeValues,
-                System.Action refreshVariablesView, CreateNewVariableDelegate createNewVariable)
+                System.Action refreshVariablesView, CreateNewVariableDelegate createNewVariable, HashSet<int> syncedVariableIDs)
             {
                 this.database = database;
                 this.group = group;
@@ -399,6 +426,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 this.runtimeValues = runtimeValues;
                 this.refreshVariablesView = refreshVariablesView;
                 this.createNewVariable = createNewVariable;
+                this.syncedVariableIDs = syncedVariableIDs;
                 reorderableList = null;
             }
 
@@ -420,7 +448,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 }
                 if (reorderableList == null)
                 {
-                    reorderableList = new ReorderableList(variableList, typeof(Variable), draggable, false, true, true);
+                    reorderableList = new ReorderableList(variableList, typeof(Variable), draggable, true, true, true);
                     reorderableList.drawHeaderCallback = OnDrawVariableHeader;
                     reorderableList.drawElementCallback = OnDrawVariableElement;
                     reorderableList.onAddDropdownCallback = OnAddVariableDropdown;
@@ -458,8 +486,9 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 if (!(reorderableList != null && 0 <= index && index < reorderableList.count)) return;
                 var variable = reorderableList.list[index] as Variable;
                 if (variable == null) return;
-                //var nameControl = "VarName" + index;
-                //var descriptionControl = "VarDescription" + index;
+                if (variable.fields == null) variable.fields = new List<Field>();
+
+                EditorGUI.BeginDisabledGroup(syncedVariableIDs != null && syncedVariableIDs.Contains(variable.id));
                 if (!variable.FieldExists("Initial Value")) variable.fields.Add(new Field("Initial Value", string.Empty, FieldType.Text));
                 if (!variable.FieldExists("Description")) variable.fields.Add(new Field("Description", string.Empty, FieldType.Text));
                 var variableNameField = Field.Lookup(variable.fields, "Name");
@@ -475,7 +504,6 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 if (conflicted) GUI.backgroundColor = Color.red;
                 EditorGUI.BeginChangeCheck();
 
-                //GUI.SetNextControlName(nameControl);
                 variableNameField.value = EditorGUI.TextField(new Rect(rect.x, rect.y + 2, fieldWidth, EditorGUIUtility.singleLineHeight), variableName);
                 if (EditorGUI.EndChangeCheck()) refreshVariablesView();
                 if (conflicted) GUI.backgroundColor = originalColor;
@@ -531,20 +559,12 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                     rect.x += fieldWidth + 2;
                 }
 
-                //GUI.SetNextControlName(descriptionControl);
                 descriptionField.value = EditorGUI.TextField(new Rect(rect.x, rect.y + 2, fieldWidth, EditorGUIUtility.singleLineHeight), descriptionField.value);
                 rect.x += fieldWidth + 2;
 
                 CustomFieldTypeService.DrawFieldType(new Rect(rect.x, rect.y + 2, typeWidth, EditorGUIUtility.singleLineHeight), initialValueField);
 
-                //var focusedControl = GUI.GetNameOfFocusedControl();
-                //if (string.Equals(nameControl, focusedControl) || string.Equals(descriptionControl, focusedControl))
-                //{
-                //    if (DialogueEditorWindow.instance != null)
-                //    {
-                //        DialogueEditorWindow.inspectorSelection = variable;
-                //    }
-                //}
+                EditorGUI.EndDisabledGroup();
             }
 
             private void OnRemoveVariable(ReorderableList list)
@@ -552,6 +572,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 if (!(reorderableList != null && 0 <= list.index && list.index < reorderableList.count)) return;
                 var variable = reorderableList.list[list.index] as Variable;
                 if (variable == null) return;
+                if (syncedVariableIDs != null && syncedVariableIDs.Contains(variable.id)) return;
                 if (EditorUtility.DisplayDialog(string.Format("Delete '{0}'?", EditorTools.GetAssetName(variable)), "Are you sure you want to delete this?", "Delete", "Cancel"))
                 {
                     database.variables.Remove(variable);

@@ -8,6 +8,7 @@ namespace Contagion
 {
     public class ConversationLogger : MonoBehaviour
     {
+
         public ResponseUIStateManager uiStateManager;
         public ContagionContinueButton continueButton; 
 
@@ -17,13 +18,12 @@ namespace Contagion
         private DialogueEntry finalEntry;  // Track current entry
         
         // State tracking
-        private bool inConversation;
+        private bool inConversation = true;
         private bool optionResponse;
         
         public static CheckResult lastCheckResult;
         
         // Properties
-        public bool InConversation => inConversation;
 
         private void Start()
         {
@@ -34,14 +34,16 @@ namespace Contagion
         // Essential conversation flow methods
         public void OnConversationStart(Transform actor)
         {
+            Debug.Log("OnConversationStart called");
             inConversation = true;
             optionResponse = false;
-            continueButton.SetState(ContinueState.DISABLED);
+            // continueButton.SetState(ContinueState.DISABLED);
             logRenderer.ClearLog(); 
         }
 
         public void OnConversationEnd(Transform actor)
         {
+            Debug.Log("OnConversationEnd called - Stack trace: " + Environment.StackTrace);
             inConversation = false;
             uiStateManager.TargetState = ResponseState.NONE;
         }
@@ -49,9 +51,14 @@ namespace Contagion
         // called before OnConversationLine 
         public void OnPrepareConversationLine(DialogueEntry entry)
         {
+            Debug.Log($"OnPrepareConversationLine called with text: {entry.subtitleText}");
+            
+        
             finalEntry = null;
-            if (!string.IsNullOrEmpty(entry.subtitleText) && inConversation)
+            if (!string.IsNullOrEmpty(entry.subtitleText))
             {
+                Debug.Log("Creating final entry");
+
                 // Create final entry
                 finalEntry = new DialogueEntry(entry);
             }
@@ -60,60 +67,92 @@ namespace Contagion
         // called just before a line is displayed 
         public void OnConversationLine(Subtitle subtitle)
         {
+            Debug.Log($"OnConversationLine called with text: {subtitle.dialogueEntry.subtitleText}");
+            
+
             if (!string.IsNullOrEmpty(subtitle.dialogueEntry.subtitleText) && inConversation)
-            {   
-                // if the last dialogue entry was a response 
+            {
                 if (optionResponse)
                 {
                     optionResponse = false;
-                    /* -- WHAT HAPPENS AFTER CLICKING ON A RESPONSE --*/
-                    // display continue button 
-                    uiStateManager.TargetState = ResponseState.CONTINUE;
-                    continueButton.SetState(ContinueState.ENABLED);
-                }
-                else // if we weren't in a response 
-                {
-                    uiStateManager.TargetState = ResponseState.CONTINUE;
-                    continueButton.SetState(ContinueState.ENABLED);
-                }
-
-                // Add to log if we have a final entry
+                } 
+                EnableContinue(subtitle.dialogueEntry);
                 if (finalEntry != null)
                 {
                     logRenderer.AddToLog(finalEntry);
+                    Debug.Log($"Added to log: {finalEntry.subtitleText}");
                 }
             }
         }
+        
+        private void EnableContinue(DialogueEntry entry)
+        {
+            // Predict next node type
+            bool isNextNodeResponse = HasResponseOptions(entry);
+        
+            if (isNextNodeResponse)
+            {
+                // Don't show continue button if next node is responses
+                // Let dialogue flow directly to response options
+                uiStateManager.TargetState = ResponseState.OPTIONS;
+                continueButton.SetState(ContinueState.DISABLED);
+                continueButton.SetInteractable(false);
+
+            }
+            else
+            {
+                // Show continue button for regular dialogue
+                uiStateManager.TargetState = ResponseState.CONTINUE;
+                continueButton.SetState(ContinueState.ENABLED);
+            }
+        }
+
+        private bool HasResponseOptions(DialogueEntry entry)
+        {
+            var conversation = DialogueManager.MasterDatabase.GetConversation(entry.conversationID);
+    
+            // Check if any outgoing links lead to player responses
+            foreach (var link in entry.outgoingLinks)
+            {
+                var targetEntry = conversation.GetDialogueEntry(link.destinationDialogueID);
+                if (targetEntry.ActorID == conversation.ActorID)
+                    return true;
+            }
+            return false;
+        }
+
 
         // called when the response menu (options panel) is displayed (this is handled 
         // by the UnityUIDialogueUI class 
         public void OnConversationResponseMenu(Response[] responses)
         {
-            Debug.Log($"Response count: {responses.Length}");
+            continueButton.SetState(ContinueState.DISABLED);
+            continueButton.SetInteractable(false);
             if (responses.Length != 0)
             {
                 optionResponse = true;
             }
-
-            Debug.Log("OnConversationResponseMenu");
+            
+            // format ressponses 
             int num = 1;
             foreach (Response response in responses)
             {
-                CombinedResponseText combinedResponseText = ChooseResponseText(response);
+                FinalResponseText finalResponseText = ChooseResponseText(response);
                 // If it's visible?? when is it not visible we format the response text with num 
-                if (combinedResponseText.visible)
+                if (finalResponseText.visible)
                 {
-                    response.formattedText.text = FormatResponse(num, combinedResponseText);
+                    response.formattedText.text = FormatResponse(num, finalResponseText);
                     num++;
                 }
             }
+          
             // set appropriate state in UI State Manager 
             uiStateManager.TargetState = ResponseState.OPTIONS;
         }  
         
         
         // TODO - figure out tags here 
-        public string FormatResponse(int counter, CombinedResponseText response)
+        public string FormatResponse(int counter, FinalResponseText response)
         {
             // throw new NotImplementedException();
             if (response.responseText.StartsWith("<color=") || response.responseText.StartsWith("["))
@@ -133,18 +172,18 @@ namespace Contagion
         
         // Checks whether the next dialogue entry is a crafting check and 
         // handles it accordingly (
-        public CombinedResponseText ChooseResponseText(Response response)
+        public FinalResponseText ChooseResponseText(Response response)
         {
             DialogueEntry destinationEntry = response.destinationEntry;
-            if (CraftingCheckManager.IsCraftingCheck(destinationEntry))
+            if (CraftingCheckNode.IsCraftingCheck(destinationEntry))
             {
                 // special handling of CombinedResponseText based on if its a check 
                 // is in this function that gets called 
-                return CraftingCheckManager.HandleResponseText(response);
+                return CraftingCheckNode.HandleResponseText(response);
             }
 
             string responseText = destinationEntry.subtitleText;
-            return new CombinedResponseText(response, responseText);
+            return new FinalResponseText(response, responseText);
         }
         
     }
