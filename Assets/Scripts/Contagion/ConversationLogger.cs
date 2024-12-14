@@ -15,7 +15,7 @@ namespace Contagion
         public UnityUIDialogueUI unityUI;       // Base dialogue UI reference
         
         public LogRenderer logRenderer;
-        private DialogueEntry finalEntry;  // Track current entry
+        private FinalEntry finalEntry;  // Track current entry
         
         // State tracking
         private bool inConversation = true;
@@ -34,7 +34,7 @@ namespace Contagion
         // Essential conversation flow methods
         public void OnConversationStart(Transform actor)
         {
-            Debug.Log("OnConversationStart called");
+            // Debug.Log("OnConversationStart called");
             inConversation = true;
             optionResponse = false;
             // continueButton.SetState(ContinueState.DISABLED);
@@ -43,7 +43,7 @@ namespace Contagion
 
         public void OnConversationEnd(Transform actor)
         {
-            Debug.Log("OnConversationEnd called - Stack trace: " + Environment.StackTrace);
+            // Debug.Log("OnConversationEnd called - Stack trace: " + Environment.StackTrace);
             inConversation = false;
             uiStateManager.TargetState = ResponseState.NONE;
         }
@@ -51,24 +51,28 @@ namespace Contagion
         // called before OnConversationLine 
         public void OnPrepareConversationLine(DialogueEntry entry)
         {
-            Debug.Log($"OnPrepareConversationLine called with text: {entry.subtitleText}");
+            // Debug.Log($"OnPrepareConversationLine called with text: {entry.subtitleText}");
             
         
             finalEntry = null;
             if (!string.IsNullOrEmpty(entry.subtitleText))
             {
-                Debug.Log("Creating final entry");
+                // Debug.Log("Creating final entry");
 
                 // Create final entry
-                finalEntry = new DialogueEntry(entry);
+                finalEntry = new FinalEntry(entry);
+                if (lastCheckResult != null)
+                {
+                    finalEntry.checkResult = lastCheckResult;
+                    lastCheckResult = null; 
+                }
             }
         }
         
         // called just before a line is displayed 
         public void OnConversationLine(Subtitle subtitle)
         {
-            Debug.Log($"OnConversationLine called with text: {subtitle.dialogueEntry.subtitleText}");
-            
+            // Debug.Log($"OnConversationLine called with text: {subtitle.dialogueEntry.subtitleText}");
 
             if (!string.IsNullOrEmpty(subtitle.dialogueEntry.subtitleText) && inConversation)
             {
@@ -80,7 +84,7 @@ namespace Contagion
                 if (finalEntry != null)
                 {
                     logRenderer.AddToLog(finalEntry);
-                    Debug.Log($"Added to log: {finalEntry.subtitleText}");
+                    // Debug.Log($"Added to log: {finalEntry.subtitleText}");
                 }
             }
         }

@@ -23,11 +23,30 @@ namespace Contagion.Metric
         private const int PARTIAL_THRESHOLD = -2;
         #endregion
         
+        // Add new method for tooltip probability calculation
+        public static float CalculatePercentageSuccess(CheckResult checkResult)
+        {
+            // Calculate final value without random factor
+            int finalValue = CalculateFinalValue(checkResult);
+        
+            // Calculate difference from base difficulty
+            int difference = finalValue - checkResult.baseDifficulty;
+        
+            // Convert to probability (0-1 range)
+            // Center point (0 difference) should be 50% chance
+            // Each point of difference shifts probability by 10%
+            // TODO -  I really don't like this formula
+            float probability = 0.5f + (difference * 0.1f);
+        
+            // Clamp between 0 and 1
+            return Mathf.Clamp01(probability);
+        }
         public static void CalculateResult(DialogueEntry entry, CheckResult checkResult)
         {
             // Calculate base value with lua variable modifiers + scaled based on the 
             // number of ingredients the player has 
             int finalValue = CalculateFinalValue(checkResult);
+            Debug.Log("difficulty with added modifiers: " + finalValue);
         
             float randomFactor = Random.Range(0.8f, 1.2f);
             finalValue = Mathf.RoundToInt(finalValue * randomFactor);
@@ -38,6 +57,9 @@ namespace Contagion.Metric
             var availableOutcomes = ArticyFieldMapper.GetAvailableOutcomes(entry);
         
             checkResult.resultType = DetermineResultType(difference, availableOutcomes);
+            
+            // set corresponding outcome variable in lua to true
+            ArticyFieldMapper.SetResultVariable(entry, checkResult.resultType);
         }
 
         private static ResultType DetermineResultType(int difference, List<ResultType> availableOutcomes)

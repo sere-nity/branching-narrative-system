@@ -3,6 +3,7 @@ using Contagion;
 using Contagion.Lua_Interfacing;
 using Contagion.Metric;
 using PixelCrushers.DialogueSystem;
+using UnityEngine;
 
 
 public static class CraftingCheckNode
@@ -17,7 +18,7 @@ public static class CraftingCheckNode
     /// </summary>
     /// <param name="entry"></param>
     /// <returns></returns>
-    private static CheckResult GetCheckResult(DialogueEntry entry)
+    public static CheckResult GetCheckResult(DialogueEntry entry)
     {
         CheckResult checkResult = new CheckResult(CheckType.CRAFTING);
         
@@ -33,12 +34,13 @@ public static class CraftingCheckNode
         
         // populate applicable modifiers list 
         checkResult.PopulateApplicableModifiers(entry);
+        
+        // populate crafted item info for the pre-check crafting response tooltip 
+        checkResult.PopulateCraftedItemInfo(entry);
     
         // Set locked state based on missing ingredients
         // checkResult.isLocked = checkResult.missingIngredients.Count > 0;
         
-       
-
         return checkResult;
     }
 
@@ -58,7 +60,8 @@ public static class CraftingCheckNode
 
     private static void HandleResultAftermath(CheckResult checkResult)
     {
-        throw new NotImplementedException();
+        Debug.Log(checkResult.ToString());
+        // throw new NotImplementedException();
     }
 
     public static bool IsCraftingCheck(DialogueEntry entry)

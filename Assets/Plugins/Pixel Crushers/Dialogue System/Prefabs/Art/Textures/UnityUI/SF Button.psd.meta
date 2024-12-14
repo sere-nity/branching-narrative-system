@@ -103,13 +103,13 @@ TextureImporter:
       name: SF Button - Hover
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 230
-        height: 71
+        x: 5
+        y: 6
+        width: 220
+        height: 59
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 38, y: 30, z: 38, w: 30}
+      border: {x: 13, y: 12, z: 15, w: 12}
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -123,7 +123,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5fcf5c91288ffe84abec57393be8a0b5
     internalID: 0
     vertices: []
     indices: 

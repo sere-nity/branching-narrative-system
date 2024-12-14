@@ -6,13 +6,13 @@
 
         public string explanation;
 
-        public bool IsPenalty
-        {
-            get
-            {
-                return bonus < 0;
-            }
-        }
+        // public bool IsPenalty
+        // {
+        //     get
+        //     {
+        //         return bonus < 0;
+        //     }
+        // }
 
         public CheckBonus(int bonus, string explanation)
         {
