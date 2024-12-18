@@ -44,6 +44,9 @@ public class LogRenderer : MonoBehaviour
             
             logEntry.Entry = entry;
             Debug.Log($"Log entry created for {entry.spokenLine}");
+            
+            // start auto scrolling
+            SingletonMonoBehaviour<AutoScroller>.Singleton.LogWasUpdated();
         }
     }
 

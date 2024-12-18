@@ -14,19 +14,17 @@ namespace Contagion
         
         public void OnPointerEnter(PointerEventData eventData)
         {
-            Debug.Log($"OnPointerEnter called on {gameObject.name}"); // NEW
+            // Debug.Log($"OnPointerEnter called on {gameObject.name}"); // NEW
             ShowTooltip();
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            Debug.Log($"OnPointerExit called on {gameObject.name}"); // NEW
             HideTooltip();
         }
 
         private void ShowTooltip()
         {
-            Debug.Log($"ShowTooltip called on {gameObject.name}"); // NEW
             IToolTip tooltipFromType = GetTooltipFromType(tooltipType);
             if (tooltipFromType != null)
             {
