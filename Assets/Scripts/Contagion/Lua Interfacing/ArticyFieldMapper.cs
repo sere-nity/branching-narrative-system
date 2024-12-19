@@ -134,21 +134,18 @@ namespace Contagion.Lua_Interfacing
         /// <returns></returns>
         public static List<CheckModifier> GetApplicableModifiers(DialogueEntry entry)
         {
-            Debug.Log("Getting applicable modifiers");
             List<CheckModifier> modifiers = new List<CheckModifier>();
 
             for (int i = 0; i < 10; i++)
             {
                 // First get the condition expression
                 string expression = Field.LookupValue(entry.fields, variableFieldList[i]).Trim();
-                Debug.Log($"Expression: {expression}");
 
 
                 if (!string.IsNullOrEmpty(expression))
                 {
                     // Access the variable directly with the correct path
                     bool applicable = DialogueLua.GetVariable(expression).AsBool;
-                    Debug.Log($"Checking {expression}: {applicable}");
 
                     if (applicable)
                     {

@@ -69,8 +69,7 @@ namespace Contagion
         /// Should be called whenever we add stuff to the log stack
         /// </summary>
         public void LogWasUpdated()
-        {
-            Debug.Log("Log was updated");;
+        { 
             // move the position of the log stack to the target marker at the beginning
             if (logEmpty)
             {
@@ -103,7 +102,6 @@ namespace Contagion
             // update the scrolling counter - this is picked up by the Update function which will begin scrolling
             if (scrollCounter > 0)
             {
-                Debug.Log("INCREMENTING SCROLL COUNTER");
                 scrollCounter++;
             }
             else
@@ -116,7 +114,6 @@ namespace Contagion
         }
         private void ScrollTowardsTargetHeight()
         {
-            Debug.Log("SCROLLING TOWARDS TARGET HEIGHT");
             // get marker positions
             float fixedHeight = GetYWorldPosition(staticMarker);
             float bottomOfStack = GetYWorldPosition(movingMarker);
@@ -134,9 +131,7 @@ namespace Contagion
             float baseScrollSpeed = 500f * screenScaleFactor;
             // remember d = vt but this is only one unit of distance... 
             float scrollDelta = baseScrollSpeed * Time.unscaledDeltaTime;
-            
-            Debug.Log($"Fixed Height: {fixedHeight}, Bottom of Stack: {bottomOfStack}");
-            Debug.Log($"Is Below: {isBelow}, Is Overflowing: {isOverflowing}");
+
             
             // if we have finished scrolling
             if (!isBelow && !isOverflowing)
@@ -144,7 +139,6 @@ namespace Contagion
                 // decrements so we can signal to the update function to stop calling this function
                 scrollCounter--;            
                 scrollBar.enabled = true;
-                Debug.Log("RETURNING");
                 // could add like extra stuff here like updating the scrollbar
                 return; 
             }
@@ -172,11 +166,10 @@ namespace Contagion
             // Ensure minimum scroll speed
             scrollDelta = Mathf.Clamp(scrollDelta, 1f, baseScrollSpeed / 10f + 2f);
             
-            Debug.Log($"Scroll Delta: {scrollDelta}");
             // Apply scroll position
             Vector3 position = targetRect.position;
             position.y += scrollDelta;
-            // position.y = topMarker.position.y + scrollDelta;
+            // position.y = topMarker.transform.position.y + scrollDelta;
             targetRect.position = position;
         }
 
@@ -187,7 +180,6 @@ namespace Contagion
             // TODO - not sure if this is necessary - but might be necessary if we want to 
             // reset the conversation from elsewhere instead of at the beginning of this class in Awake()
             // logEmpty = true;
-            Debug.Log("SETTING INITIAL POSITION");
             // move the position of the log stack to the static marker at the beginning
             SetContentTransform(staticMarker, targetRect, movingMarker);
 

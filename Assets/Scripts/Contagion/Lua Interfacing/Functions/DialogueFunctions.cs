@@ -7,6 +7,7 @@ namespace Contagion.Lua_Interfacing.Functions
         private void OnEnable()
         {
             InventoryLuaFunctions.Register();
+            QuestLuaFunctions.Register();
         }
     }
     
