@@ -45,5 +45,17 @@ namespace Contagion.Diary_System
                 taskUIItems.Add(task.Name, entryUI);
             }
         }
+
+        public void UpdateVisuals()
+        {
+            foreach (Transform child in transform)
+            {
+                var entryUI = child.GetComponent<DiaryEntryUI>();
+                if (entryUI != null)
+                {
+                    entryUI.UpdateVisuals();
+                }
+            }
+        }
     }
 }
