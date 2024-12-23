@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b815386a75ab41d78493e8d2ef5611e4, type: 3}
+  m_Name: Egg
+  m_EditorClassIdentifier: 
+  id: egg
+  displayName: Egg
+  icon: {fileID: 21300000, guid: 92ef6f18ddd38d84b9a931ce7b575a34, type: 3}
+  description: This is an egg
+  isCrafted: 1
+  isStackable: 0
+  essenceRequirements:
+  - essenceType: 0
+    amount: 2
+  - essenceType: 1
+    amount: 1
+  craftingIngredients: []
+  memoryConversationName: 

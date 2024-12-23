@@ -8,6 +8,7 @@ namespace Contagion.Lua_Interfacing.Functions
         {
             InventoryLuaFunctions.Register();
             QuestLuaFunctions.Register();
+            AlchemyLuaFunctions.Register();
         }
     }
     
