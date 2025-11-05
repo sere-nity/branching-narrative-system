@@ -7,7 +7,7 @@ Inspired by Disco Elysium's narrative depth and dialogue mechanics, this project
 
 I integrated **Articy Draft** with Unity using **Pixel Crushers Dialogue System** as the bridge. Dialogue content is authored in Articy and exported as `.asset` files that Unity imports automatically.
 
-![Image](Assets/Screenshot 2025-11-05 143051.png) 
+![example](Assets/Screenshot%202025-11-05%20143051.png)
 
 ### Articy Integration
 
